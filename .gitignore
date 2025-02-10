@@ -1,0 +1,13 @@
+#Packages de desarrollador
+/node_modules
+/server/node_modules
+/client/node_modules
+
+#Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+#Archivos del sistema
+.DS_Store
+Thumbs.db
