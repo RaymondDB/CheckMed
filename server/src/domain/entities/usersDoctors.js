@@ -1,8 +1,6 @@
-const User = require('./User');
-
-class Doctor extends User {
-  constructor(id, firstName, lastName, email, password, roleId, specialtyId, licenseNumber, phoneNumber, yearsOfExperience, education, bio, consultationFee, clinicAddress, availabilityModelId, licenseExpirationDate, createdAt, updatedAt, isActive) {
-    super(id, firstName, lastName, email, password, roleId, createdAt, updatedAt, isActive);
+class Doctor {
+  constructor(doctorId, specialtyId, licenseNumber, phoneNumber, yearsOfExperience, education, bio, consultationFee, clinicAddress, availabilityModelId, licenseExpirationDate, createdAt, updatedAt, isActive) {
+    this.doctorId = doctorId;
     this.specialtyId = specialtyId;
     this.licenseNumber = licenseNumber;
     this.phoneNumber = phoneNumber;
@@ -13,8 +11,15 @@ class Doctor extends User {
     this.clinicAddress = clinicAddress;
     this.availabilityModelId = availabilityModelId;
     this.licenseExpirationDate = licenseExpirationDate;
+    this.createdAt = createdAt || new Date();
+    this.updatedAt = updatedAt || null;
+    this.isActive = isActive;
   }
 
+  /*updateSpecialty(newSpecialtyId) {
+    this.specialtyId = newSpecialtyId;
+    this.updatedAt = new Date();
+  }*/
 }
 
 module.exports = Doctor;

@@ -1,4 +1,4 @@
-const EmailValid = require('../valueObjects/Email');
+const EmailValid = require('../valueObjects/userEmail');
 
 class User {
   constructor(id, firstName, lastName, email, password, roleId, createdAt, updatedAt, isActive) {

@@ -1,8 +1,6 @@
-const User = require('./User');
-
-class Patient extends User {
-  constructor(id, firstName, lastName, email, password, roleId, dateOfBirth, gender, phoneNumber, address, emergencyContactName, emergencyContactPhone, bloodType, allergies, insuranceProviderId, createdAt, updatedAt, isActive) {
-    super(id, firstName, lastName, email, password, roleId, createdAt, updatedAt, isActive);
+class Patient {
+  constructor(patientId, dateOfBirth, gender, phoneNumber, address, emergencyContactName, emergencyContactPhone, bloodType, allergies, insuranceProviderId, createdAt, updatedAt, isActive) {
+    this.patientId = patientId;
     this.dateOfBirth = dateOfBirth;
     this.gender = gender;
     this.phoneNumber = phoneNumber;
@@ -12,8 +10,16 @@ class Patient extends User {
     this.bloodType = bloodType;
     this.allergies = allergies;
     this.insuranceProviderId = insuranceProviderId;
+    this.createdAt = createdAt || new Date();
+    this.updatedAt = updatedAt || null;
+    this.isActive = isActive;
   }
-  
+
+  /*updateAddress(newAddress) {
+    this.address = newAddress;
+    this.updatedAt = new Date();
+  }*/
+ 
 }
 
 module.exports = Patient;

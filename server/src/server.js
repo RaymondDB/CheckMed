@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { connectDB } = require('../infrastructure/db/dbconfig.js');
+const { connectDB } = require('./infrastructure/db/dbconfig.js');
 
 const app = express();
 app.use(cors());
