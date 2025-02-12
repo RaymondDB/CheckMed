@@ -13,7 +13,7 @@ const config = {
   }
 };
 
-// Definimos connectDB como función asíncrona
+
 const connectDB = async () => {
   try {
     await sql.connect(config);
@@ -24,7 +24,8 @@ const connectDB = async () => {
   }
 };
 
-// Asegúrate de exportar correctamente
+
 module.exports = {
   connectDB
 };
+
