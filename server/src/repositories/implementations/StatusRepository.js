@@ -1,26 +1,29 @@
-const { sql, poolPromise } = require("../../infrastructure/db/sqlConnection");
-const IStatusRepository = require("../interfaces/IStatusRepository");
+const { Status } = require("../../infrastructure/models");
+const IStatusRepository = require("../IStatusRepository");
 
-class StatusRepository extends IStatusRepository {
-    async createStatus(status) {
-        // Implementación futura
-    }
+class StatusRepositoryImpl extends IStatusRepository {
+  async save(statusData) {
+    return await Status.create(statusData);
+  }
 
-    async getStatusById(id) {
-        // Implementación futura
-    }
+  async findById(id) {
+    return await Status.findByPk(id);
+  }
 
-    async getAllStatuses() {
-        // Implementación futura
-    }
+  async findAll() {
+    return await Status.findAll();
+  }
 
-    async updateStatus(id, status) {
-        // Implementación futura
-    }
+  async update(id, statusData) {
+    const status = await Status.findByPk(id);
+    if (!status) return null;
 
-    async deleteStatus(id) {
-        // Implementación futura
-    }
+    return await status.update(statusData);
+  }
+
+  async delete(id) {
+    return await Status.destroy({ where: { statusID: id } });
+  }
 }
 
-module.exports = StatusRepository;
+module.exports = new StatusRepositoryImpl();

@@ -1,9 +1,10 @@
 class IAppointmentRepository {
-    createAppointment(appointment) {}
-    getAppointmentById(id) {}
-    getAllAppointments() {}
-    updateAppointment(id, appointment) {}
-    deleteAppointment(id) {}
-}
-
-module.exports = IAppointmentRepository;
+    save(appointmentData) {}
+    findById(id) {}
+    findAll() {}
+    update(id, appointmentData) {}
+    delete(id) {}
+  }
+  
+  module.exports = IAppointmentRepository;
+  
