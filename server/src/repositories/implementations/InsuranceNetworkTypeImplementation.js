@@ -26,8 +26,8 @@ class InsuranceNetworkTypeImp extends IInsuranceNetworkTypeRepository {
   
 
     async delete(id) {
-      return await InsuranceNetworkType.destroy({ where: { id } });    }
+      return await InsuranceNetworkType.destroy({ where: { id } });    
     }
-  }
-  
+}
+
   module.exports = InsuranceNetworkType;
