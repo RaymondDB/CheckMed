@@ -1,6 +1,6 @@
-class UserRepository {
+class PatientRepository {
     
-    async save(user) {
+    async save(patientData) {
       throw new Error('Method not implemented.');
     }
   
@@ -18,7 +18,7 @@ class UserRepository {
       throw new Error('Method not implemented.');
     }
 
-    async update(user) {
+    async update(id, userData) {
       throw new Error('Method not implemented.');
     }
   
@@ -28,5 +28,5 @@ class UserRepository {
     }
   }
   
-  module.exports = UserRepository;
+  module.exports = PatientRepository;
   

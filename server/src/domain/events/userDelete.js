@@ -4,7 +4,7 @@ module.exports = function UserDeleted(userId) {
     return {
       type: 'USER_DELETED',
       payload: {
-        id: userId
+        id: user.id
       },
       timestamp: new Date()
     };

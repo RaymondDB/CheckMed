@@ -1,26 +1,26 @@
-const sql = require('mssql');
 require('dotenv').config();
+const { Sequelize } = require ("sequelize");
 
-const config = {
-  user: process.env.DB_USER,
+const sequelize = new Sequelize({
+  dialect: 'mssql',
+  username: process.env.DB_USER,
   password: process.env.DB_PASS,
-  server: process.env.DB_SERVER,
+  host: process.env.DB_SERVER,
   database: process.env.DB_DATABASE,
   port: parseInt(process.env.DB_PORT, 10),
   options: {
     encrypt: process.env.DB_ENCRYPT === 'true',
     trustServerCertificate: true
   }
-};
+});
 
 
 const connectDB = async () => {
   try {
-    await sql.connect(config);
-    console.log('Conectado a SQL Server');
-  } catch (err) {
-    console.error('Error al conectar a la base de datos:', err);
-    throw err;
+    await sequelize.authenticate();
+    console.log('Connection has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
   }
 };
 
