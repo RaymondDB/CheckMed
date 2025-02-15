@@ -1,10 +1,23 @@
 class IAppointmentRepository {
-    save(appointmentData) {}
-    findById(id) {}
-    findAll() {}
-    update(id, appointmentData) {}
-    delete(id) {}
+  async save(appointmentData) {
+    throw new Error("Method not implemented");
   }
-  
-  module.exports = IAppointmentRepository;
-  
+
+  async findById(id) {
+    throw new Error("Method not implemented");
+  }
+
+  async findAll() {
+    throw new Error("Method not implemented");
+  }
+
+  async update(id, appointmentData) {
+    throw new Error("Method not implemented");
+  }
+
+  async delete(id) {
+    throw new Error("Method not implemented");
+  }
+}
+
+module.exports = IAppointmentRepository;
