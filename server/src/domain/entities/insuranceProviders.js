@@ -6,7 +6,7 @@ class InsuranceProvider {
       this.id = id;
       this.name = name;
       this.contactNumber = contactNumber;
-      //this.email = new EmailValid(email);  // Se implementará cuando se junten todas las branchs
+      this.email = new EmailValid(email);
       this.website = website;
       this.adress = adress;     
       this.city = city;

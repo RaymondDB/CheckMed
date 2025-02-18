@@ -1,0 +1,21 @@
+{
+    "Messages": {
+      "Errors": {
+        "OperationFailed": "Ha ocurrido un error mientras se procesaba la solicitud.",
+        "InvalidEmail": "El formato de Email es invalido",
+        "UserNotFound": "Usuario no encontrado.",
+        "EmptyField": "Los campos no pueden enviarse vacíos.",
+        "EmptyID":"El campo ID no puede estar vacio",
+        "InvalidID": "El ID es invalido.",
+        "NoRecords":"No se han encotrado registros en la tabla.",
+        "EmptyUpdateFields":"Se requieren los datos para actualizar el campo."
+      },
+      "Success": {
+        "OperationCompleted": "La operacion se completó correctamente.",
+        "UserCreated": "User has been created successfully.",
+        "EmailCreated": "El email se ha creado con éxito.",
+        "UpdateCompleted": "Se han actualizado los datos."
+        
+      }
+    }
+  }

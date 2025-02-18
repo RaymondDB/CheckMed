@@ -6,4 +6,4 @@ class IInsuranceNetworkTypeRepository {
     delete(id) {}
 }
 
-module.exports = IInsuranceNetworkType 
+module.exports = IInsuranceNetworkTypeRepository 
