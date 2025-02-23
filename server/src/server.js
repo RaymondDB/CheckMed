@@ -1,11 +1,24 @@
-const express = require('express');
-const cors = require('cors');
-const { connectDB } = require('./infrastructure/db/dbconfig.js');
+const express = require("express");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const { connectDB } = require("./infrastructure/db/dbconfig");
+
+// Importar rutas
+const userRoutes = require("./application/interfaces/usersRoutes");
+const doctorRoutes = require("./application/interfaces/usersDoctorRoutes");
+const patientRoutes = require("./application/interfaces/usersPatientRoutes");
+
+dotenv.config(); // Cargar variables de entorno
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
+// Registrar rutas
+app.use("/users", userRoutes);
+app.use("/doctors", doctorRoutes);
+app.use("/patients", patientRoutes);
 
 
 const PORT = process.env.PORT || 3000;

@@ -1,17 +1,51 @@
+const { sequelize } = require("../db/dbconfig"); 
 const { DataTypes } = require("sequelize");
-const sequelize = require("../config/dbconfig");
 
-const UserModel = sequelize.define("User", {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  firstName: { type: DataTypes.STRING, allowNull: false },
-  lastName: { type: DataTypes.STRING, allowNull: false },
-  email: { type: DataTypes.STRING, allowNull: false, unique: true },
-  password: { type: DataTypes.STRING, allowNull: false },
-  roleId: { type: DataTypes.INTEGER, allowNull: false },
-  isActive: { type: DataTypes.BOOLEAN, defaultValue: true }
+const UserModel = sequelize.define("users.Users", {
+  UserID: { 
+    type: DataTypes.INTEGER, 
+    primaryKey: true, 
+    autoIncrement: true 
+  },
+  FirstName: { 
+    type: DataTypes.STRING(100), 
+    allowNull: false 
+  },
+  LastName: { 
+    type: DataTypes.STRING(100), 
+    allowNull: false 
+  },
+  Email: { 
+    type: DataTypes.STRING(255), 
+    allowNull: false, 
+    unique: true 
+  },
+  Password: { 
+    type: DataTypes.STRING(255), 
+    allowNull: false 
+  },
+  RoleID: { 
+    type: DataTypes.INTEGER, 
+    allowNull: true  // En la BD permite NULL, así que lo dejamos así
+  },
+  CreatedAt: { 
+    type: DataTypes.DATETIME, 
+    allowNull: true  // Puede ser NULL según la BD
+  },
+  UpdatedAt: { 
+    type: DataTypes.DATETIME, 
+    allowNull: true  // Puede ser NULL según la BD
+  },
+  IsActive: { 
+    type: DataTypes.BOOLEAN, 
+    allowNull: false, 
+    defaultValue: true 
+  }
 }, {
-  tableName: "Users",
-  timestamps: true
+  tableName: "users.Users",  // Nombre exacto de la tabla
+  schema: "users",     // Nombre del esquema en SQL Server
+  timestamps: false    // Desactivamos timestamps automáticos de Sequelize
 });
 
 module.exports = UserModel;
+

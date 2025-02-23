@@ -1,16 +1,16 @@
+const { sequelize } = require("../db/dbconfig");
 const { DataTypes } = require("sequelize");
-const sequelize = require("../config/dbconfig");
 
-const PatientModel = sequelize.define("Patient", {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+const PatientModel = sequelize.define("users.Patients", {
+  id: { type: DataTypes.INTEGER, primaryKey: true},
   dateOfBirth: { type: DataTypes.DATE, allowNull: false },
   gender: { type: DataTypes.STRING, allowNull: false },
   phoneNumber: { type: DataTypes.STRING, allowNull: false },
   address: { type: DataTypes.STRING },
   insuranceProviderId: { type: DataTypes.INTEGER, allowNull: true },
-  isActive: { type: DataTypes.BOOLEAN, defaultValue: true }
+  isActive: { type: DataTypes.BOOLEAN}
 }, {
-  tableName: "Patients",
+  tableName: "users.Patients",
   timestamps: true
 });
 

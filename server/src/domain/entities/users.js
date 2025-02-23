@@ -5,23 +5,23 @@ class User {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
-    this.email = new EmailValid(email);  // Validación del correo electrónico
-    this.password = password;     
+    this.email = new EmailValid(email); // Validación de email
+    this.password = password;  
     this.roleId = roleId;
-    this.createdAt = createdAt || new Date();
-    this.updatedAt = updatedAt || null;
-    this.isActive = isActive;
+    this.createdAt = createdAt || new Date(); // Si no hay fecha, se pone la actual
+    this.updatedAt = updatedAt || new Date(); // Evitar valores nulos
+    this.isActive = isActive !== undefined ? isActive : true; // Valor por defecto: true
   }
 
   updateEmail(newEmail) {
-    this.email = new Email(newEmail);
+    this.email = new EmailValid(newEmail); // Validar nuevo email
     this.updatedAt = new Date();
   }
 
- /* deactivateUser() {
+  deactivateUser() {
     this.isActive = false;
     this.updatedAt = new Date();
-  }*/
+  }
 }
 
 module.exports = User;
