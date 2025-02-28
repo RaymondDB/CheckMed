@@ -1,21 +1,24 @@
+const { sequelize } = require("../db/dbconfig");
 const { DataTypes } = require("sequelize");
-const sequelize = require("../config/dbconfig");
 
 const StatusModel = sequelize.define(
-  "Status",
+  "status",
   {
-    StatusID: {
+    statusId: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    StatusName: {
-      type: DataTypes.STRING(50),
+    statusName: { type: DataTypes.STRING(50), allowNull: false, unique: true },
+    createdAt: {
+      type: DataTypes.DATE,
       allowNull: false,
+      defaultValue: DataTypes.NOW,
     },
+    updatedAt: { type: DataTypes.DATE, allowNull: true },
   },
   {
-    tableName: "Status",
+    tableName: "status",
     timestamps: true,
   }
 );

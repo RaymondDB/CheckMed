@@ -1,18 +1,20 @@
-class RoleValidator {
-  constructor(userRole, allowedRoles) {
-    if (!this.isValidRole(userRole, allowedRoles)) {
-      throw new Error("Acceso denegado: Rol no autorizado.");
+class RoleName {
+  constructor(roleName) {
+    if (!this.isValidRoleName(roleName)) {
+      throw new Error(
+        "Nombre de rol inválido: No puede estar vacío y debe tener entre 3 y 50 caracteres."
+      );
     }
-    this.userRole = userRole;
+    this.roleName = roleName;
   }
 
-  isValidRole(userRole, allowedRoles) {
-    if (!userRole || !Array.isArray(allowedRoles)) {
-      console.error("Datos de entrada inválidos");
-      return false;
-    }
-    return allowedRoles.includes(userRole);
+  isValidRoleName(roleName) {
+    return (
+      typeof roleName === "string" &&
+      roleName.trim().length >= 3 &&
+      roleName.trim().length <= 50
+    );
   }
 }
 
-module.exports = RoleValidator;
+module.exports = RoleName;

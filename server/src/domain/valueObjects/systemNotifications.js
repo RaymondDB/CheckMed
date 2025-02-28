@@ -1,4 +1,4 @@
-class Notification {
+class NotificationMessage {
   constructor(message) {
     if (!this.isValidMessage(message)) {
       throw new Error(
@@ -17,4 +17,4 @@ class Notification {
   }
 }
 
-module.exports = Notification;
+module.exports = NotificationMessage;

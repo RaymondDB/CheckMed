@@ -1,29 +1,91 @@
-const { Status } = require("../infrastructure/db/models");
-const StatusRepository = require("../interfaces/StatusRepository");
+const OperationResult = require("../../helpers/OperationResult");
+const { sequelize } = require("../../infrastructure/db/dbconfig");
+const { QueryTypes } = require("sequelize");
+const moment = require("moment");
 
-class StatusRepositoryImpl extends StatusRepository {
+class StatusImplementation {
+  async findById(StatusID) {
+    try {
+      console.log("🔍 Buscando estado con ID:", StatusID);
+
+      const status = await sequelize.query(
+        `SELECT * FROM system.Status WHERE statusId = :StatusID`,
+        { replacements: { StatusID }, type: QueryTypes.SELECT }
+      );
+
+      if (!status.length)
+        return OperationResult.failure("Estado no encontrado.");
+
+      return OperationResult.success(status[0]);
+    } catch (error) {
+      return OperationResult.failure("Error en la búsqueda del estado.", error);
+    }
+  }
+
+  async findByName(StatusName) {
+    try {
+      console.log("🔍 Buscando estado con nombre:", StatusName);
+
+      const status = await sequelize.query(
+        `SELECT * FROM system.Status WHERE statusName = :StatusName`,
+        { replacements: { StatusName }, type: QueryTypes.SELECT }
+      );
+
+      if (!status.length)
+        return OperationResult.failure("Estado no encontrado.");
+
+      return OperationResult.success(status[0]);
+    } catch (error) {
+      return OperationResult.failure("Error en la búsqueda del estado.", error);
+    }
+  }
+
   async save(statusData) {
-    return await Status.create(statusData);
+    try {
+      console.log("💾 Guardando estado en BD:", statusData);
+
+      const createdAt = moment().format("YYYY-MM-DD HH:mm:ss");
+
+      const result = await sequelize.query(
+        `INSERT INTO system.Status (statusName, createdAt, updatedAt)
+         VALUES (:StatusName, :CreatedAt, :UpdatedAt)`,
+        {
+          replacements: {
+            StatusName: statusData.StatusName,
+            CreatedAt: createdAt,
+            UpdatedAt: createdAt,
+          },
+          type: QueryTypes.INSERT,
+        }
+      );
+
+      return OperationResult.success({
+        message: "Estado guardado correctamente",
+        result,
+      });
+    } catch (error) {
+      return OperationResult.failure("Error al guardar el estado.", error);
+    }
   }
 
-  async findById(id) {
-    return await Status.findByPk(id);
-  }
+  async delete(StatusID) {
+    try {
+      console.log(" Eliminando estado con ID:", StatusID);
 
-  async findAll() {
-    return await Status.findAll();
-  }
+      const result = await sequelize.query(
+        `DELETE FROM system.Status WHERE statusId = :StatusID`,
+        { replacements: { StatusID }, type: QueryTypes.DELETE }
+      );
 
-  async update(id, statusData) {
-    const status = await Status.findByPk(id);
-    if (!status) return null;
+      if (result === 0) {
+        return OperationResult.failure("Estado no encontrado.");
+      }
 
-    return await status.update(statusData);
-  }
-
-  async delete(id) {
-    return await Status.destroy({ where: { StatusID: id } });
+      return OperationResult.success("Estado eliminado correctamente.");
+    } catch (error) {
+      return OperationResult.failure("Error al eliminar el estado.", error);
+    }
   }
 }
 
-module.exports = new StatusRepositoryImpl();
+module.exports = new StatusImplementation();
