@@ -40,7 +40,6 @@ class StatusService {
       );
     }
 
-    // Crear objeto para guardar en la BD
     const statusToSave = {
       StatusID,
       StatusName,

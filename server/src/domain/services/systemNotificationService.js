@@ -45,7 +45,7 @@ class NotificationService {
       NotificationID,
       UserID,
       Message,
-      SentAt: SentAt || new Date(), // Si no se proporciona, se usa la fecha actual
+      SentAt: SentAt || new Date(),
     };
 
     const notificationResult = await NotificationRepository.save(
