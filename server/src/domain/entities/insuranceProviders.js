@@ -30,10 +30,10 @@ class InsuranceProvider {
       this.updatedAt = new Date();
     }
   
-   /* deactivateInsuranceProvider() {
+   deactivateInsuranceProvider() {
       this.isActive = false;
       this.updatedAt = new Date();
-    }*/
+    }
   }
   
   module.exports = InsuranceProvider;

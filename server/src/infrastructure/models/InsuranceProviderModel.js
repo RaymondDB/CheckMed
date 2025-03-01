@@ -1,7 +1,7 @@
-const { DataTypes } = require("sequelize");
 const sequelize = require("../config/dbconfig");
+const { DataTypes } = require("sequelize");
 
-const InsuranceProviderModel = sequelize.define("InsuranceProvider", {
+const InsuranceProviderModel = sequelize.define("insurance.InsuranceProviders", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, allowNull: false },
   contactNumber: { type: DataTypes.STRING, allowNull: false },
@@ -19,9 +19,9 @@ const InsuranceProviderModel = sequelize.define("InsuranceProvider", {
   customerSupportContact: { type: DataTypes.STRING, allowNull: true },
   acceptedRegions: { type: DataTypes.STRING, allowNull: true },
   maxCoverageAmount: { type: DataTypes.DECIMAL(10, 2), allowNull: true  },
-  isActive: { type: DataTypes.BOOLEAN, defaultValue: true }
+  isActive: { type: DataTypes.BOOLEAN}
 }, {
-  tableName: "InsuranceProviders",
+  tableName: "insurance.InsuranceProviders",
   timestamps: true
 });
 

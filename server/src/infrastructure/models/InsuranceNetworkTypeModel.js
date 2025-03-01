@@ -1,13 +1,13 @@
-const { DataTypes } = require("sequelize");
 const sequelize = require("../config/dbconfig");
+const { DataTypes } = require("sequelize");
 
-const InsuranceNetworkTypeModel = sequelize.define("InsuranceNetworkType", {
+const InsuranceNetworkTypeModel = sequelize.define("insurance.NetworkType", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, allowNull: false },
   description: { type: DataTypes.STRING, allowNull: true },
-  isActive: { type: DataTypes.BOOLEAN, defaultValue: true }
+  isActive: { type: DataTypes.BOOLEAN}
 }, {
-  tableName: "NetworkType",
+  tableName: "insurance.NetworkType",
   timestamps: true
 });
 

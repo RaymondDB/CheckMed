@@ -1,18 +1,19 @@
-const Config = require('../../infrastructure/Config')
+const Config = require('../../infrastructure/Config/appsetting.json')
 
 class OperationResult {
-    constructor(success, message = '', data = null) {
+    constructor(success, message = '', data = null, error = null) {
         this.success = success;
         this.message = message;
         this.data = data;
+        this.error = error;
     }
 
     static success(data = null, key = 'OperationCompleted') {
-        return new OperationResult(true, Config.getMessage('Success', key), data);
+        return new OperationResult(true, 'Success', key, data);
     }
 
-    static failure(key = 'OperationFailed') {
-        return new OperationResult(false, Config.getMessage('Errors', key));
+    static failure(key = 'OperationFailed', error = null) {
+        return new OperationResult(false, 'Errors', key, error);
     }
 }
 

@@ -13,10 +13,10 @@ class InsuranceNetworkType {
       this.updatedAt = new Date();
     }
   
-   /* deactivateInsuranceNetworkTpye() {
+   deactivateInsuranceNetworkTpye() {
       this.isActive = false;
       this.updatedAt = new Date();
-    }*/
+    }
   }
   
   module.exports = InsuranceNetworkType;

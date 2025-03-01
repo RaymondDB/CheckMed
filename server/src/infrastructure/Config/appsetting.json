@@ -2,20 +2,50 @@
     "Messages": {
       "Errors": {
         "OperationFailed": "Ha ocurrido un error mientras se procesaba la solicitud.",
-        "InvalidEmail": "El formato de Email es invalido",
+        "InvalidEmail": "El formato de Email es inválido.",
         "UserNotFound": "Usuario no encontrado.",
-        "EmptyField": "Los campos no pueden enviarse vacíos.",
-        "EmptyID":"El campo ID no puede estar vacio",
-        "InvalidID": "El ID es invalido.",
+        "EmptyField": "Los campos obligatorios deben rellenarse.",
+        "EmptyID":"El campo ID no puede estar vacío.",
+        "InvalidID": "El ID es inválido.",
+        "InvalidType": "Formato de datos incorrecto",
         "NoRecords":"No se han encotrado registros en la tabla.",
-        "EmptyUpdateFields":"Se requieren los datos para actualizar el campo."
+        "EmptyUpdateFields":"Se requieren los datos para actualizar el campo.",
+
+        "InsuranceNetworkTypeAlreadyExisting": "Ya existe un tipo de red de seguros registrado con esa identificación.",
+        "InsuranceNetworkTypeNotFound": "Tipo de red de seguros no encontrado",
+        "InsuranceNetworkTypeNotFoundOrDeleted": "Tipo de red de seguros no encontrado o ya eliminado.",
+        "InsuranceNetworkTypeSearchError": "Error en la busqueda del tipo de red de de seguros.",
+        "InsuranceNetworkTypeSearchListError": "Error al obtener la lista de tipos de red de seguros.",
+        "InsuranceNetworkTypeSaveError": "Error al guardar el tipo de red de seguros.",
+        "InsuranceNetworkTypeUpdateError": "Error al actualizar el tipo de red de seguros.",
+        "InsuranceNetworkTypeDeleteError": "Error al eliminar el tipo de red de seguros.",
+
+        "InsuranceProviderAlreadyExisting": "Ya existe un proveedor de seguros registrado con esa identificación.",
+        "InsuranceProviderNotFound": "Proveedor de seguros no encontrado",
+        "InsuranceProviderotFoundOrDeleted": "Proveedor de seguros no encontrado o ya eliminado.",
+        "InsuranceProviderSearchError": "Error en la busqueda del proveedor de seguros",
+        "InsuranceProviderSearchListError": "Error al obtener la lista de proveedores de seguros.",
+        "InsuranceProviderSaveError": "Error al guardar el proveedor seguros.",
+        "InsuranceProviderUpdateError": "Error al actualizar el proveedor de seguros.",
+        "InsuranceProviderDeleteError": "Error al eliminar el proveedor seguros.",
+
+        "InvalidContactNumber": "Numero de contacto inválido.",
+        "InvalidCustomerSupportContact": "Numero de contacto a atención a cliente inválido."
+
       },
       "Success": {
         "OperationCompleted": "La operacion se completó correctamente.",
         "UserCreated": "User has been created successfully.",
         "EmailCreated": "El email se ha creado con éxito.",
-        "UpdateCompleted": "Se han actualizado los datos."
-        
+        "UpdateCompleted": "Se han actualizado los datos.",
+
+        "InsuranceProviderSaveCompleted": "Proveedor de seguros guardado correctamente",
+        "InsuranceProviderUpdateCompleted": "Proveedor de seguros actualizado correctamente",
+        "InsuranceProviderDeleteCompleted": "Proveedor de seguros desactivado correctamente.",
+
+        "InsuranceNetworkTypeSaveCompleted": "Tipo de red  de seguros guardado correctamente",
+        "InsuranceNetworkTypeUpdateCompleted": "Tipo de red  de seguros actualizado correctamente",
+        "InsuranceNetworkTypeDeleteCompleted": "Tipo de red de seguros desactivado correctamente."
       }
     }
   }
