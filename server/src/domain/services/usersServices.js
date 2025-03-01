@@ -1,7 +1,7 @@
 const UserRepository = require("../../repositories/implementations/UsersImplementation");
 const EventBus = require("../listeners/eventBus");
 const OperationResult = require("../../helpers/OperationResult");
-const ValidationService = require("../services/validationService");
+const ValidationService = require("./validationService");
 
 class UserService {
   async createUser(userData) {
@@ -16,14 +16,14 @@ class UserService {
     const { UserID, FirstName, LastName, Email, Password, RoleID, IsActive } = userData;
 
     // Verificar que los datos fueron extraídos correctamente
-    console.log("🟡 Campos extraídos:");
-    console.log("   ➤ UserID:", UserID);
-    console.log("   ➤ FirstName:", FirstName);
-    console.log("   ➤ LastName:", LastName);
-    console.log("   ➤ Email:", Email);
-    console.log("   ➤ Password:", Password);
-    console.log("   ➤ RoleID:", RoleID);
-    console.log("   ➤ IsActive:", IsActive);
+    console.log("Campos extraídos:");
+    console.log("UserID:", UserID);
+    console.log("FirstName:", FirstName);
+    console.log("LastName:", LastName);
+    console.log("Email:", Email);
+    console.log("Password:", Password);
+    console.log("RoleID:", RoleID);
+    console.log("IsActive:", IsActive);
 
     // Validación de campos obligatorios
     if (!FirstName || !LastName || !Email || !Password || !RoleID) {
