@@ -23,20 +23,16 @@ const container = createContainer();
 
 // Registramos las dependencias en el contenedor
 container.register({
-  // Base de datos
   sequelize: asValue(sequelize),
 
-  // Repositorios (Persistencia)
   notificationRepository: asClass(NotificationRepositoryImpl).singleton(),
   roleRepository: asClass(RoleRepositoryImpl).singleton(),
   statusRepository: asClass(StatusRepositoryImpl).singleton(),
 
-  // Servicios de negocio (BBL)
   notificationBService: asClass(NotificationBService).singleton(),
   roleBService: asClass(RoleBService).singleton(),
   statusBService: asClass(StatusBService).singleton(),
 
-  // Servicios de dominio
   notificationService: asClass(NotificationService).singleton(),
   roleService: asClass(RoleService).singleton(),
   statusService: asClass(StatusService).singleton(),
