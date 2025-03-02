@@ -8,11 +8,6 @@ class InsuranceNetworkType {
       this.isActive = isActive;
     }
   
-    updateEmail(newEmail) {
-      this.email = new Email(newEmail);
-      this.updatedAt = new Date();
-    }
-  
    deactivateInsuranceNetworkTpye() {
       this.isActive = false;
       this.updatedAt = new Date();
