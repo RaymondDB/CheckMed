@@ -24,6 +24,8 @@ class DoctorsImplementation {
     }
   }
 
+  
+
   async findAll() {
     try {
       console.log("📄 Buscando todos los doctores...");
@@ -38,6 +40,30 @@ class DoctorsImplementation {
       return OperationResult.failure("Error al obtener la lista de doctores.", error);
     }
   }
+
+  async findByLicense(licenseNumber) {
+    try {
+      const result = await sequelize.query(
+        "SELECT * FROM users.Doctors WHERE LicenseNumber = :licenseNumber",
+        {
+          replacements: { licenseNumber },
+          type: sequelize.QueryTypes.SELECT,
+        }
+      );
+
+      if (result.length === 0) {
+        return OperationResult.failure("Doctor no encontrado.");
+      }
+
+      return OperationResult.success(result[0]);
+    } catch (error) {
+      console.error("Error en findByLicense:", error);
+      return OperationResult.failure("Error al buscar el doctor.");
+    }
+  }
+
+
+
 
   async save(doctorData) {
     try {

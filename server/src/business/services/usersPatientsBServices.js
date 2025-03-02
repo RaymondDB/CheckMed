@@ -17,19 +17,19 @@ class PatientService {
     }
 
     // Validación con reglas de dominio
-    const validation = PatientDomainService.validateRequiredFields(patientData);
+    const validation = PatientDomainService.validateRequiredFields(patientData); //FALTA POR CREAR 
     if (!validation.success) {
       console.error("Error:", validation.message);
       return OperationResult.failure(validation.message);
     }
 
-    if (!PatientDomainService.isAdult(patientData.DateOfBirth)) {
+    if (!PatientDomainService.isAdult(patientData.DateOfBirth)) { //FALTA POR CREAR
       console.error("Error: El paciente debe ser mayor de 18 años.");
       return OperationResult.failure("El paciente debe ser mayor de 18 años.");
     }
 
     console.log("Verificando si el paciente ya está registrado...");
-    const existingPatient = await this.patientRepository.findByPhone(patientData.PhoneNumber);
+    const existingPatient = await this.patientRepository.findByPhone(patientData.PhoneNumber); //FALTA POR CREAR
     if (existingPatient.success && existingPatient.data) {
       console.error("Error: El paciente ya está registrado con este número de teléfono.");
       return OperationResult.failure("El paciente ya está registrado con este número de teléfono.");

@@ -5,9 +5,10 @@ const OperationResult = require("../../helpers/OperationResult");
 const ValidationService = require("../rules/usersRules");
 const { sequelize } = require("../../infrastructure/db");
 
+
 class UserService {
   constructor({ userRepository }) {
-    this.userRepository = userRepository;
+    this.UserRepository = UserRepository;
   }
 
   async createUser(userData) {
@@ -19,19 +20,19 @@ class UserService {
     }
 
     // Validación con reglas de dominio
-    const validation = UserDomainService.validateRequiredFields(userData); //no esta en el dominio
+    const validation = UserDomainService.validateRequiredFields(userData);
     if (!validation.success) {
       console.error("Error:", validation.message);
       return OperationResult.failure(validation.message);
     }
 
-    if (!ValidationService.isValidEmail(userData.Email)) { //esta en value objects
+    if (!ValidationService.isValidEmail(userData.Email)) { 
       console.error("Error: Email no válido.");
       return OperationResult.failure("El correo electrónico no es válido.");
     }
 
     console.log("Verificando si el usuario ya está registrado...");
-    const existingUser = await this.userRepository.findByEmail(userData.Email); //no esta implementado
+    const existingUser = await this.userRepository.findByEmail(userData.Email); 
     if (existingUser.success && existingUser.data) {
       console.error("Error: El usuario ya está registrado.");
       return OperationResult.failure("El usuario ya está registrado.");

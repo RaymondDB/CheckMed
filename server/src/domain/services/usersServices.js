@@ -117,5 +117,21 @@ class UserService {
   }
 }
 
+
+//Clase para validar los campos al momento de crear un usuario en la capa de negocio
+class UserDomainService {
+  static validateRequiredFields(userData) {
+    const requiredFields = ["FirstName", "LastName", "Email", "Password", "RoleID"];
+    for (const field of requiredFields) {
+      if (!userData[field]) {
+        return { success: false, message: `El campo ${field} es obligatorio.` };
+      }
+    }
+    return { success: true };
+  }
+}
+
+module.exports = UserDomainService;
+
 module.exports = new UserService();
 

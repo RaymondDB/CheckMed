@@ -52,6 +52,8 @@ class DoctorService {
       return OperationResult.failure("Número de teléfono inválido.");
     }
 
+    
+
     console.log("Verificando si el doctor ya está registrado...");
     const existingDoctor = await DoctorRepository.findByLicense(LicenseNumber);
     if (existingDoctor.success && existingDoctor.data) {
@@ -89,6 +91,17 @@ class DoctorService {
     }
 
     return doctorResult;
+  }
+
+  async isLicenseValid(expirationDate) {
+    if (!expirationDate) {
+      return false; // Si no hay fecha, asumimos que la licencia no es válida
+    }
+
+    const today = new Date();
+    const licenseDate = new Date(expirationDate);
+    
+    return licenseDate >= today;
   }
 
   async getDoctorById(DoctorID) {
@@ -144,5 +157,27 @@ class DoctorService {
     return deleteResult;
   }
 }
+
+class DoctorDomainService {
+  static validateRequiredFields(doctorData) {
+    const requiredFields = [
+      "SpecialtyID",
+      "LicenseNumber",
+      "PhoneNumber",
+      "YearsOfExperience",
+      "Education"
+    ];
+
+    for (const field of requiredFields) {
+      if (!doctorData[field]) {
+        return { success: false, message: `El campo ${field} es obligatorio.` };
+      }
+    }
+
+    return { success: true };
+  }
+}
+
+module.exports = DoctorDomainService;
 
 module.exports = new DoctorService();

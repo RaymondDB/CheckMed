@@ -1,11 +1,12 @@
 const DoctorDomainService = require("../../domain/services/usersDoctorServices");
 const EventBus = require("../listeners/eventBus");
+const DoctorRepository = require("../../repositories/implementations/UsersDoctorImplementation");
 const OperationResult = require("../../helpers/OperationResult");
 const ValidationService = require("../rules/usersDoctorsRules");
 
 class DoctorService {
   constructor({ doctorRepository }) {
-    this.doctorRepository = doctorRepository;
+    this.doctorRepository = DoctorRepository;
   }
 
   async createDoctor(doctorData) {
