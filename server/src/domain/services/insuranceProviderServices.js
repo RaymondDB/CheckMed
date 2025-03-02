@@ -168,10 +168,25 @@ class InsuranceProviderService {
       return OperationResult.failure(insuranceProvider.data);//Devuelve el error encontrado
     }
 
-    if (!ValidationService.isValidMaxCoverageAmount(updatedFields.MaxCoverageAmount)) {
-      console.error("Error: Covertura máxima inválida ");
-      return OperationResult.failure('InvalidMaxCoverageAmount');
+    if (!ValidationService.isValidPhoneNumber(updatedFields.ContactNumber)) {
+      console.error("Error: Número de contacto inválido.");
+      return OperationResult.failure('InvalidContactNumber');
     }
+
+
+  if (!ValidationService.isValidPhoneNumber(updatedFields.CustomerSupportContact)) {
+      return OperationResult.failure('InvalidCustomerSupportContact');
+  }
+
+  if (!ValidationService.isValidEmail(updatedFields.Email)) {
+    console.error("Error: Email no válido.");
+    return OperationResult.failure('InvalidEmail');
+  }
+
+  if (!ValidationService.isValidMaxCoverageAmount(updatedFields.MaxCoverageAmount)) {
+    console.error("Error: Covertura máxima inválida ");
+    return OperationResult.failure('InvalidMaxCoverageAmount');
+  }
 
     console.log("🔍 Comprobando la existencia del tipo de red de seguros con ID:", updatedFields.NetworkTypeId," al que pertenecerá el proveedor de seguros.");
     
