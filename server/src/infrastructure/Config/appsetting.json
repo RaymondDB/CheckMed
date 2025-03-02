@@ -2,7 +2,6 @@
     "Messages": {
       "Errors": {
         "OperationFailed": "Ha ocurrido un error mientras se procesaba la solicitud.",
-        "InvalidEmail": "El formato de Email es inválido.",
         "UserNotFound": "Usuario no encontrado.",
         "EmptyField": "Los campos obligatorios deben rellenarse.",
         "EmptyID":"El campo ID no puede estar vacío.",
@@ -10,6 +9,25 @@
         "InvalidType": "Formato de datos incorrecto",
         "NoRecords":"No se han encotrado registros en la tabla.",
         "EmptyUpdateFields":"Se requieren los datos para actualizar el campo.",
+
+        "TooLongFields": "Hay campos especificados que exceden del límite de caracteres posible.",
+        "TooLongName50": "El nombre especificado es demasiado largo. La longitud maxima son 50 caracteres.",
+        "TooLongName100": "El nombre especificado es demasiado largo. La longitud maxima son 100 caracteres.",
+        "TooLongDescription": "La descripcion especificada es demasiado larga. La longitud maxima son 255 caracteres.",
+        "TooLongContactNumber": "El numero de contacto especificado es demasiado largo. La longitud maxima son 15 caracteres.",
+        "TooLongEmail": "El Email especificado es demasiado largo. La longitud maxima son 100 caracteres.",
+        "TooLongWebSite": "El sitio web especificado es demasiado largo. La longitud maxima son 255 caracteres.",
+        "TooLongAdress": "La direccion especificada es demasiado larga. La longitud maxima son 255 caracteres.",
+        "TooLongCity": "La ciudad especificada es demasiado larga. La longitud maxima son 100 caracteres.",
+        "TooLongState": "El estado especificado es demasiado largo. La longitud maxima son 100 caracteres.",
+        "TooLongCountry": "El pais especificado es demasiado largo. La longitud maxima son 100 caracteres.",
+        "TooLongZipCode": "El codigo postal especificado es demasiado largo. La longitud maxima son 10 caracteres.",
+        "TooLongLogoUrl": "La direccion URL de logo especificada es demasiado larga. La longitud maxima son 255 caracteres.",
+        "TooLongCustomerSupportContact": "El contacto de la atencion al cliente especificado es demasiado largo. La longitud maxima son 15 caracteres.",
+        "TooLongAcceptedRegions": "Las regiones aceptadas especificadas son demasiado largas. La longitud maxima son 255 caracteres.",
+        
+        "InvalidEmail": "El formato de Email es inválido.",
+        "InvalidMaxCoverageAmount": "El formato de Email es inválido.",
 
         "InsuranceNetworkTypeAlreadyExisting": "Ya existe un tipo de red de seguros registrado con esa identificación.",
         "InsuranceNetworkTypeNotFound": "Tipo de red de seguros no encontrado",
@@ -28,9 +46,11 @@
         "InsuranceProviderSaveError": "Error al guardar el proveedor seguros.",
         "InsuranceProviderUpdateError": "Error al actualizar el proveedor de seguros.",
         "InsuranceProviderDeleteError": "Error al eliminar el proveedor seguros.",
-
         "InvalidContactNumber": "Numero de contacto inválido.",
-        "InvalidCustomerSupportContact": "Numero de contacto a atención a cliente inválido."
+        "InvalidCustomerSupportContact": "Numero de contacto a atención a cliente inválido.",
+        "InvalidNetworkTypeID": "El ID otorgado del tipo de red de seguros al que pertenece el proveedor de seguros es inválido.",
+        "InsuranceProviderNetworkTypeNotFound": "El ID otorgado del tipo de red de seguros al que pertenece el proveedor de seguros no ha sido encontrado.",
+        "InsuranceProviderNetworkTypeSearchError": "Error en la busqueda del tipo de red de seguros al que pertenece el proveedor de seguros."
 
       },
       "Success": {
@@ -39,12 +59,12 @@
         "EmailCreated": "El email se ha creado con éxito.",
         "UpdateCompleted": "Se han actualizado los datos.",
 
-        "InsuranceProviderSaveCompleted": "Proveedor de seguros guardado correctamente",
-        "InsuranceProviderUpdateCompleted": "Proveedor de seguros actualizado correctamente",
+        "InsuranceProviderSaveCompleted": "Proveedor de seguros guardado correctamente.",
+        "InsuranceProviderUpdateCompleted": "Proveedor de seguros actualizado correctamente.",
         "InsuranceProviderDeleteCompleted": "Proveedor de seguros desactivado correctamente.",
 
-        "InsuranceNetworkTypeSaveCompleted": "Tipo de red  de seguros guardado correctamente",
-        "InsuranceNetworkTypeUpdateCompleted": "Tipo de red  de seguros actualizado correctamente",
+        "InsuranceNetworkTypeSaveCompleted": "Tipo de red  de seguros guardado correctamente.",
+        "InsuranceNetworkTypeUpdateCompleted": "Tipo de red  de seguros actualizado correctamente.",
         "InsuranceNetworkTypeDeleteCompleted": "Tipo de red de seguros desactivado correctamente."
       }
     }

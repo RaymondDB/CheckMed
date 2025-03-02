@@ -1,4 +1,5 @@
-const Config = require('../../infrastructure/Config/appsetting.json')
+const config = require('../../infrastructure/Config/appsetting.json')
+
 
 class OperationResult {
     constructor(success, message = '', data = null, error = null) {
@@ -8,8 +9,10 @@ class OperationResult {
         this.error = error;
     }
 
+    
+    
     static success(data = null, key = 'OperationCompleted') {
-        return new OperationResult(true, 'Success', key, data);
+        return new OperationResult(true, key,data , );
     }
 
     static failure(key = 'OperationFailed', error = null) {

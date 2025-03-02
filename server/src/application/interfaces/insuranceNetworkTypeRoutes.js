@@ -3,7 +3,7 @@ const router = express.Router();
 const InsuranceNetworkTypeService = require("../../domain/services/insuranceNetworkTypeServices");
 
 router.post("/", async (req, res) => {
-    const result = await InsuranceNetworkTypeService.createInsuranceNetworkTypeService(req.body);
+    const result = await InsuranceNetworkTypeService.createInsuranceNetworkType(req.body);
     if (!result.success) return res.status(400).json(result);
     res.status(201).json(result);
   });

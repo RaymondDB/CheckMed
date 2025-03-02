@@ -1,5 +1,3 @@
-requi
-
 class InsuranceProvider {
     constructor(id, name, contactNumber, email, website, adress, city, state, country, zipCode, converageDetails, logoUrl, 
         isPrefered, networkTypeId, customerSupportContact, acceptedRegions, maxCoverageAmount, createdAt, updatedAt, isActive) {

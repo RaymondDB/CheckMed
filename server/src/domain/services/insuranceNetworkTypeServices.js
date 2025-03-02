@@ -3,7 +3,6 @@ const EventBus = require("../listeners/eventBus");
 const OperationResult = require("../../domain/valueObjects/OperationResult");
 const ValidationService = require("../../domain/services/validationService");
 
-
 class InsuranceNetworkTypeService {
   async createInsuranceNetworkType(insuranceNetworkTypeData) {
     console.log("INSURANCE NETWORK TYPE DATA RECIBIDO EN SERVICE:", insuranceNetworkTypeData);
@@ -32,6 +31,13 @@ class InsuranceNetworkTypeService {
       return OperationResult.failure('EmptyField');
     }
 
+    
+    if(!ValidationService.isValidFieldLenght(Name, 50) ||
+    !ValidationService.isValidFieldLenght(Description, 255)
+      ){
+      console.error("Hay campos especificados que exceden del límite de caracteres posible.")
+      return OperationResult.failure('TooLongFields')
+    } 
 
     console.log("Verificando si el tipo de red de seguros ya está registrado...");
     const existingInsuranceNetworkType = await InsuranceNetworkTypeRepository.findById(NetworkTypeID);
@@ -68,9 +74,9 @@ class InsuranceNetworkTypeService {
     
     const insuranceNetworkType = await InsuranceNetworkTypeRepository.findById(NetworkTypeID);
     if (!insuranceNetworkType.success) {
-      console.error("Tipo de red de seguros no encontrado.");
-      return OperationResult.failure('InsuranceNetworkTypeNotFound');
+      return OperationResult.failure(insuranceNetworkType.data);//Devuelve el error encontrado
     }
+
 
     EventBus.emit("InsuranceNetworkTypeFetched", insuranceNetworkType.data);
     return insuranceNetworkType;
@@ -81,8 +87,14 @@ class InsuranceNetworkTypeService {
 
     const insuranceNetworkType = await InsuranceNetworkTypeRepository.findById(NetworkTypeID);
     if (!insuranceNetworkType.success) {
-      console.error("Tipo de red de seguros no encontrado.");
-      return OperationResult.failure('InsuranceNetworkTypeNotFound');
+      return OperationResult.failure(insuranceNetworkType.data);//Devuelve el error encontrado
+    }
+
+    if(!ValidationService.isValidFieldLenght(updatedFields.Name, 50) ||
+    !ValidationService.isValidFieldLenght(updatedFields.Description, 255)
+      ){
+      console.error("Hay campos especificados que exceden del límite de caracteres posible.")
+      return OperationResult.failure('TooLongFields')
     }
 
     console.log("✅ Actualizando tipo de red de seguros con ID:", NetworkTypeID, "Campos:", updatedFields);
@@ -102,8 +114,7 @@ class InsuranceNetworkTypeService {
 
     const insuranceNetworkType = await InsuranceNetworkTypeRepository.findById(NetworkTypeID);
     if (!insuranceNetworkType.success) {
-      console.error("Tipo de red de seguros no encontrado.");
-      return OperationResult.failure('InsuranceNetworkTypeNotFound');
+      return OperationResult.failure(insuranceNetworkType.data);//Devuelve el error encontrado
     }
 
     console.log("🗑 Desactivando tipo de red de seguros con ID:", NetworkTypeID);
