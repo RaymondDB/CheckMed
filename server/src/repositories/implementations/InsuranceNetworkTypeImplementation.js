@@ -64,10 +64,12 @@ class InsuranceNetworkTypeImplementation {
       const formattedDate = moment().format("YYYY-MM-DD HH:mm:ss");
 
       const result = await sequelize.query(
-        `INSERT INTO insurance.NetworkType (Name, Description, CreatedAt, UpdatedAt, IsActive)
-         VALUES (:Name, :Description, :CreatedAt, :UpdatedAt, :IsActive)`,
+        `SET IDENTITY_INSERT insurance.NetworkType ON;
+        INSERT INTO insurance.NetworkType (NetworkTypeId, Name, Description, CreatedAt, UpdatedAt, IsActive)
+         VALUES (:NetworkTypeId, :Name, :Description, :CreatedAt, :UpdatedAt, :IsActive)`,
         {
           replacements: {
+            NetworkTypeId: insuranceNetworkTypeData.NetworkTypeID,
             Name: insuranceNetworkTypeData.Name,
             Description: insuranceNetworkTypeData.Description,
             CreatedAt: formattedDate, 
@@ -77,7 +79,8 @@ class InsuranceNetworkTypeImplementation {
           type: QueryTypes.INSERT,
         }
       );
-  
+      
+      console.log("Tipo de red de seguros guardado correctamente.")
       return OperationResult.success(result, 'InsuranceNetworkTypeSaveCompleted');
     } catch (error) {
       return OperationResult.failure('InsuranceNetworkTypeSaveError', error);
