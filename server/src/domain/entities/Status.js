@@ -1,17 +1,7 @@
-const StatusName = require("./StatusName");
-
 class Status {
-  constructor(statusID, name) {
-    this.statusID = statusID;
-    this.name = new StatusName(name);
-  }
-
-  getName() {
-    return this.name.getValue();
-  }
-
-  isValid() {
-    return this.statusID && this.name.getValue();
+  constructor(appointmentId, status) {
+    this.appointmentId = appointmentId;
+    this.status = status;
   }
 }
 

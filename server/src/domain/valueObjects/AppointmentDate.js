@@ -1,19 +1,14 @@
 class AppointmentDate {
-    constructor(date) {
-      if (!(date instanceof Date)) {
-        throw new Error("Invalid date format");
-      }
-      this.date = date;
+  constructor(date) {
+    if (!Date.parse(date)) {
+      throw new Error('Invalid date format');
     }
-  
-    getDate() {
-      return this.date;
-    }
-  
-    equals(other) {
-      return other instanceof AppointmentDate && this.date.getTime() === other.getDate().getTime();
-    }
+    this.date = new Date(date);
   }
-  
-  module.exports = AppointmentDate;
-  
+
+  toString() {
+    return this.date.toISOString();
+  }
+}
+
+module.exports = AppointmentDate;

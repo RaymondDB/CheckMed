@@ -1,19 +1,14 @@
 class StatusName {
-    constructor(name) {
-      if (!name) {
-        throw new Error("Status name is required");
-      }
-      this.name = name;
+  constructor(status) {
+    if (status !== 'Scheduled' && status !== 'Completed' && status !== 'Cancelled') {
+      throw new Error('Invalid status');
     }
-  
-    getValue() {
-      return this.name;
-    }
-  
-    equals(other) {
-      return other instanceof StatusName && this.name === other.getValue();
-    }
+    this.status = status;
   }
-  
-  module.exports = StatusName;
-  
+
+  toString() {
+    return this.status;
+  }
+}
+
+module.exports = StatusName;

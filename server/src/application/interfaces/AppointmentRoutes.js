@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const InsuranceNetworkTypeService = require("../../domain/services/insuranceNetworkTypeServices");
+const AppointmentService = require("../../domain/services/AppointmentService");
 
 router.post("/", async (req, res) => {
-    const result = await InsuranceNetworkTypeService.createInsuranceNetworkType(req.body);
+    const result = await AppointmentService.create(req.body);
     if (!result.success) return res.status(400).json(result);
     res.status(201).json(result);
   });
   
   router.get("/:id", async (req, res) => {
-    const result = await InsuranceNetworkTypeService.getInsuranceNetworkTypeById(req.params.id);
+    const result = await AppointmentService.getAppointmentServiceById(req.params.id);
     if (!result.success) return res.status(404).json(result);
     res.json(result);
   });
