@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const InsuranceProvidersService = require("../../domain/services/insuranceProviderServices");
+const InsuranceProvidersService = require("../../domain/services/insuranceProvidersServices");
 
 router.post("/", async (req, res) => {
     const result = await InsuranceProvidersService.createInsuranceProvider(req.body);

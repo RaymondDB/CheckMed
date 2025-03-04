@@ -6,7 +6,7 @@ const moment = require("moment");
 
 
 
-class InsuranceProviderImplementation {
+class InsuranceProvidersImplementation {
     
   async findById(InsuranceProviderID) {
     try {
@@ -77,6 +77,7 @@ class InsuranceProviderImplementation {
         { type: QueryTypes.SELECT }
       );
 
+      console.log("Proveedor de seguros ha sido encontrado correctamente.")
       return OperationResult.success(insuranceProvider);
     } catch (error) {
       return OperationResult.failure('InsuranceProviderSearchListError', error);
@@ -125,6 +126,7 @@ class InsuranceProviderImplementation {
         }
       );
 
+      console.log("Proveedor de seguros guardado correctamente.")
       return OperationResult.success(result, 'InsuranceProviderSaveCompleted');
     } catch (error) {
       return OperationResult.failure('InsuranceProviderSaveError', error);
@@ -212,4 +214,4 @@ class InsuranceProviderImplementation {
 }
 
 
-module.exports = new InsuranceProviderImplementation();
+module.exports = new InsuranceProvidersImplementation();

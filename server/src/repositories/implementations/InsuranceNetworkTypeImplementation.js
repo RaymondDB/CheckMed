@@ -30,6 +30,7 @@ class InsuranceNetworkTypeImplementation {
         return OperationResult.failure('InsuranceNetworkTypeNotFound');
       } 
       
+      console.log("Tipo de red de seguros ha sido encontrado correctamente.")
       return OperationResult.success(insuranceNetworkType[0]);
     } catch (error) {
       return OperationResult.failure('InsuranceNetworkTypeSearchError', error);

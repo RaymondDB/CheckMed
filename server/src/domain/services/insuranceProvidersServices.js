@@ -1,9 +1,9 @@
-const InsuranceProviderRepository = require("../../repositories/implementations/InsuranceProviderImplementation");
+const InsuranceProvidersRepository = require("../../repositories/implementations/InsuranceProvidersImplementation");
 const EventBus = require("../listeners/eventBus");
 const OperationResult = require("../valueObjects/OperationResult");
 const ValidationService = require("../../domain/services/validationService");
 
-class InsuranceProviderService {
+class InsuranceProvidersService {
   async createInsuranceProvider(insuranceProviderData) {
     console.log("INSURANCE PROVIDER DATA RECIBIDO EN SERVICE:", insuranceProviderData);
 
@@ -66,7 +66,6 @@ class InsuranceProviderService {
 
 
     if (!ValidationService.isValidPhoneNumber(CustomerSupportContact)) {
-
         return OperationResult.failure('InvalidCustomerSupportContact');
     }
 
@@ -81,7 +80,7 @@ class InsuranceProviderService {
     }
 
     console.log("Verificando si el proveedor de seguros ya está registrado...");
-    const existingInsuranceProvider = await InsuranceProviderRepository.findById(InsuranceProviderID);
+    const existingInsuranceProvider = await InsuranceProvidersRepository.findById(InsuranceProviderID);
     if (existingInsuranceProvider.success && existingInsuranceProvider.data) {
       console.error("Error: Ya existe un proveedor de seguros registrado con esa identificación.");
       return OperationResult.failure('InsuranceProviderAlreadyExisting');
@@ -89,7 +88,7 @@ class InsuranceProviderService {
 
     console.log("🔍 Comprobando la existencia del tipo de red de seguros con ID:", NetworkTypeId," al que pertenece el proveedor de seguros con ID:", InsuranceProviderID);
     
-    const insuranceProviderNetworkType = await InsuranceProviderRepository.findInsuranceProviderNetworkType(NetworkTypeId);
+    const insuranceProviderNetworkType = await InsuranceProvidersRepository.findInsuranceProviderNetworkType(NetworkTypeId);
     if(!insuranceProviderNetworkType.success){
       return OperationResult.failure(insuranceProviderNetworkType.data);//Devuelve el error encontrado
     }
@@ -137,7 +136,7 @@ class InsuranceProviderService {
 
     console.log("Guardando el proveedor de seguros en BD:", insuranceProviderToSave);
 
-    const insuranceProviderResult = await InsuranceProviderRepository.save(insuranceProviderToSave);
+    const insuranceProviderResult = await InsuranceProvidersRepository.save(insuranceProviderToSave);
     if (insuranceProviderResult.success) {
       console.log("Proveedor de seguros guardado con éxito:", insuranceProviderResult.data);
       EventBus.emit("InsuranceProviderCreated", insuranceProviderResult.data);
@@ -151,7 +150,7 @@ class InsuranceProviderService {
   async getInsuranceProviderById(InsuranceProviderID) {
     console.log("🔍 Buscando el proveedor de seguros con ID:", InsuranceProviderID);
 
-    const insuranceProvider = await InsuranceProviderRepository.findById(InsuranceProviderID);
+    const insuranceProvider = await InsuranceProvidersRepository.findById(InsuranceProviderID);
     if (!insuranceProvider.success) {
       return OperationResult.failure(insuranceProvider.data);//Devuelve el error encontrado
     }
@@ -160,13 +159,21 @@ class InsuranceProviderService {
     return insuranceProvider;
   }
 
+
   async updateInsuranceProvider(InsuranceProviderID, updatedFields) {
     console.log("🛠️ Buscando el proveedor de seguros con ID:", InsuranceProviderID);
 
-    const insuranceProvider = await InsuranceProviderRepository.findById(InsuranceProviderID);
+    const insuranceProvider = await InsuranceProvidersRepository.findById(InsuranceProviderID);
     if (!insuranceProvider.success) {
       return OperationResult.failure(insuranceProvider.data);//Devuelve el error encontrado
     }
+
+    if (!updatedFields.Name || !updatedFields.Email || !updatedFields.Address || 
+      !updatedFields.CoverageDetails || !updatedFields.IsPreferred || !updatedFields.NetworkTypeId) {
+      console.error("Error: Faltan campos obligatorios en insuranceProviderData.");
+      return OperationResult.failure('EmptyField');
+    }
+
 
     if (!ValidationService.isValidPhoneNumber(updatedFields.ContactNumber)) {
       console.error("Error: Número de contacto inválido.");
@@ -174,23 +181,23 @@ class InsuranceProviderService {
     }
 
 
-  if (!ValidationService.isValidPhoneNumber(updatedFields.CustomerSupportContact)) {
-      return OperationResult.failure('InvalidCustomerSupportContact');
-  }
+    if (!ValidationService.isValidPhoneNumber(updatedFields.CustomerSupportContact)) {
+        return OperationResult.failure('InvalidCustomerSupportContact');
+    }
 
-  if (!ValidationService.isValidEmail(updatedFields.Email)) {
-    console.error("Error: Email no válido.");
-    return OperationResult.failure('InvalidEmail');
-  }
+    if (!ValidationService.isValidEmail(updatedFields.Email)) {
+      console.error("Error: Email no válido.");
+      return OperationResult.failure('InvalidEmail');
+    }
 
-  if (!ValidationService.isValidMaxCoverageAmount(updatedFields.MaxCoverageAmount)) {
-    console.error("Error: Covertura máxima inválida ");
-    return OperationResult.failure('InvalidMaxCoverageAmount');
-  }
+    if (!ValidationService.isValidMaxCoverageAmount(updatedFields.MaxCoverageAmount)) {
+      console.error("Error: Covertura máxima inválida ");
+      return OperationResult.failure('InvalidMaxCoverageAmount');
+    }
 
     console.log("🔍 Comprobando la existencia del tipo de red de seguros con ID:", updatedFields.NetworkTypeId," al que pertenecerá el proveedor de seguros.");
     
-    const insuranceProviderNetworkType = await InsuranceProviderRepository.findInsuranceProviderNetworkType(updatedFields.NetworkTypeId);
+    const insuranceProviderNetworkType = await InsuranceProvidersRepository.findInsuranceProviderNetworkType(updatedFields.NetworkTypeId);
     if(!insuranceProviderNetworkType.success){
       return OperationResult.failure(insuranceProviderNetworkType.data);//Devuelve el error encontrado
     }
@@ -218,7 +225,7 @@ class InsuranceProviderService {
 
     updatedFields.UpdatedAt = new Date();
 
-    const updateResult = await InsuranceProviderRepository.update(InsuranceProviderID, updatedFields);
+    const updateResult = await InsuranceProvidersRepository.update(InsuranceProviderID, updatedFields);
     if (updateResult.success) {
       EventBus.emit("InsuranceProviderUpdated", updateResult.data);
     }
@@ -229,13 +236,13 @@ class InsuranceProviderService {
   async deleteInsuranceProvider(InsuranceProviderID) {
     console.log("🗑 Buscando proveedor de seguros con ID:", InsuranceProviderID);
 
-    const insuranceProvider = await InsuranceProviderRepository.findById(InsuranceProviderID);
+    const insuranceProvider = await InsuranceProvidersRepository.findById(InsuranceProviderID);
     if (!insuranceProvider.success) {
       return OperationResult.failure(insuranceProvider.data);//Devuelve el error encontrado
     }
 
     console.log("🗑 Desactivando proveedor de seguros con ID:", InsuranceProviderID);
-    const deleteResult = await InsuranceProviderRepository.delete(InsuranceProviderID);
+    const deleteResult = await InsuranceProvidersRepository.delete(InsuranceProviderID);
 
     if (deleteResult.success) {
       EventBus.emit("InsuranceProviderDeleted", { InsuranceProviderID });
@@ -245,4 +252,28 @@ class InsuranceProviderService {
   }
 }
 
-module.exports = new InsuranceProviderService();
+class InsuranceProvidersDomainService {
+  static validateRequiredFields(insuranceProvidersData) {
+    const requiredFields = [
+      "InsuranceProviderID",
+      "Name",
+      "Email",
+      "Address",
+      "CoverageDetails",
+      "IsPreferred",
+      "NetworkTypeId"
+    ];
+
+    for (const field of requiredFields) {
+      if (!insuranceProvidersData[field]) {
+        return OperationResult.failure(`El campo ${field} es obligatorio.`);
+      }
+    }
+
+    return OperationResult.success();
+  }
+}
+
+module.exports = InsuranceProvidersDomainService
+
+module.exports  = new InsuranceProvidersService();

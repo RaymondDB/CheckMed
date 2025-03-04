@@ -1,19 +1,19 @@
 class InsuranceProvider {
-    constructor(id, name, contactNumber, email, website, adress, city, state, country, zipCode, converageDetails, logoUrl, 
-        isPrefered, networkTypeId, customerSupportContact, acceptedRegions, maxCoverageAmount, createdAt, updatedAt, isActive) {
+    constructor(id, name, contactNumber, email, website, address, city, state, country, zipCode, coverageDetails, logoUrl, 
+        isPreferred, networkTypeId, customerSupportContact, acceptedRegions, maxCoverageAmount, createdAt, updatedAt, isActive) {
       this.id = id;
       this.name = name;
       this.contactNumber = contactNumber;
       this.email = new EmailValid(email);
       this.website = website;
-      this.adress = adress;     
+      this.address = address;     
       this.city = city;
       this.state = state;
       this.country = country;
       this.zipCode = zipCode;
-      this.converageDetails = converageDetails;
+      this.coverageDetails = coverageDetails;
       this.logoUrl = logoUrl;
-      this.isPrefered = isPrefered;
+      this.isPreferred = isPreferred;
       this.networkTypeId = networkTypeId;
       this.customerSupportContact = customerSupportContact;
       this.acceptedRegions = acceptedRegions;
