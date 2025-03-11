@@ -94,6 +94,7 @@ class DoctorsImplementation {
             UpdatedAt: formattedDate,
             IsActive: doctorData.IsActive !== undefined ? doctorData.IsActive : true,
           },
+          transaction,
           type: QueryTypes.INSERT,
         }
       );

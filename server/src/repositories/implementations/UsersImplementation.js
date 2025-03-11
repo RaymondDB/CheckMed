@@ -44,35 +44,46 @@ class UsersImplementation {
       return OperationResult.failure("Error en la búsqueda de usuario.", error);
     }
   }
-  async save(userData) {
+  async save(userData, transaction) {
     try {
-      console.log("💾 Guardando usuario en BD:", userData);
-  
-      const formattedDate = moment().format("YYYY-MM-DD HH:mm:ss");
-  
       const result = await sequelize.query(
-        `INSERT INTO users.Users (FirstName, LastName, Email, Password, RoleID, CreatedAt, UpdatedAt, IsActive)
-         VALUES (:FirstName, :LastName, :Email, :Password, :RoleID, :CreatedAt, :UpdatedAt, :IsActive)`,
+        `INSERT INTO users.Users (FirstName, LastName, Email, Password, RoleID, CreatedAt, UpdatedAt, IsActive) 
+         VALUES (:firstName, :lastName, :email, :password, :roleId, :createdAt, :updatedAt, :isActive)`,
         {
           replacements: {
-            FirstName: userData.FirstName,
-            LastName: userData.LastName,
-            Email: userData.Email,
-            Password: userData.Password,
-            RoleID: userData.RoleID,
-            CreatedAt: formattedDate, 
-            UpdatedAt: formattedDate,
-            IsActive: userData.IsActive !== undefined ? userData.IsActive : true
+            firstName: userData.FirstName,
+            lastName: userData.LastName,
+            email: userData.Email,
+            password: userData.Password,
+            roleId: userData.RoleID,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            isActive: userData.IsActive ?? true,
           },
-          type: QueryTypes.INSERT,
+          transaction, // Usar la transacción si está activa
+          type: sequelize.QueryTypes.INSERT,
         }
       );
-  
-      return OperationResult.success({ message: "Usuario guardado correctamente", result });
+
+      return OperationResult.success({ id: result[0] });
     } catch (error) {
-      return OperationResult.failure("Error al guardar el usuario.", error);
+      return OperationResult.failure("Error al guardar el usuario.");
     }
   }
+
+  async startTransaction() {
+    return await sequelize.transaction();
+  }
+
+  async commitTransaction(transaction) {
+    await transaction.commit();
+  }
+
+  async rollbackTransaction(transaction) {
+    await transaction.rollback();
+  }
+
+
 
   async update(UserID, updatedFields) {
     try {

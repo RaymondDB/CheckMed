@@ -69,6 +69,7 @@ class PatientsImplementation {
                     UpdatedAt: formattedDate,
                     IsActive: patientData.IsActive !== undefined ? patientData.IsActive : true,
                 },
+                transaction,
                 type: QueryTypes.INSERT,
             }
         );
