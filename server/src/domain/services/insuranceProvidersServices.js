@@ -58,6 +58,11 @@ class InsuranceProvidersService {
       return OperationResult.failure('EmptyField');
     }
 
+    if(!ValidationService.isValidId(InsuranceProviderID)){
+      console.log("Error: El ID es invalido.");
+      return OperationResult.failure('InvalidID');
+    }
+
     
     if (!ValidationService.isValidPhoneNumber(ContactNumber)) {
         console.error("Error: Número de contacto inválido.");
@@ -66,6 +71,7 @@ class InsuranceProvidersService {
 
 
     if (!ValidationService.isValidPhoneNumber(CustomerSupportContact)) {
+      console.error("Error: Número de atencion a cliente inválido.");
         return OperationResult.failure('InvalidCustomerSupportContact');
     }
 
@@ -182,6 +188,7 @@ class InsuranceProvidersService {
 
 
     if (!ValidationService.isValidPhoneNumber(updatedFields.CustomerSupportContact)) {
+       console.error("Error: Número de atencion a cliente inválido.");     
         return OperationResult.failure('InvalidCustomerSupportContact');
     }
 

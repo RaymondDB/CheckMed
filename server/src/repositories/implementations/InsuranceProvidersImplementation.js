@@ -84,7 +84,7 @@ class InsuranceProvidersImplementation {
     }
   }
 
-  async save(insuranceProviderData) {
+  async save(insuranceProviderData, transaction) {
     try {
       //console.log("💾 Guardando proveedor de seguros en BD:", insuranceProviderData);
 
@@ -121,7 +121,7 @@ class InsuranceProvidersImplementation {
             CreatedAt: formattedDate,
             UpdatedAt: formattedDate,
             IsActive: insuranceProviderData.IsActive !== undefined ? insuranceProviderData.IsActive : true,
-          },
+          }, transaction,
           type: QueryTypes.INSERT,
         }
       );
@@ -133,6 +133,19 @@ class InsuranceProvidersImplementation {
     }
   }
 
+  async startTransaction() {
+    return await sequelize.transaction();
+  }
+
+  async commitTransaction(transaction) {
+    await transaction.commit();
+  }
+
+  async rollbackTransaction(transaction) {
+    await transaction.rollback();
+  }
+  
+  
   async update(InsuranceProviderID, updatedFields) {
     try {
       //console.log("✅ Actualizando proveedor de seguros con ID:", InsuranceProviderID, "Campos:", updatedFields);

@@ -85,7 +85,7 @@ class InsuranceProvidersService {
 
     console.log("Guardando el proveedor de seguros en BD:", insuranceProviderToSave);
 
-    const insuranceProviderResult = await this.insuranceProvidersRepository.save(insuranceProviderToSave);
+    const insuranceProviderResult = await this.insuranceProvidersRepository.save(insuranceProviderToSave, transaction);
     if (insuranceProviderResult.success) {
       console.log("Proveedor de seguros guardado con éxito:", insuranceProviderResult.data);
       EventBus.emit("InsuranceProviderCreated", insuranceProviderResult.data);

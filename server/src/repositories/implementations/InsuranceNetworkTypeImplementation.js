@@ -58,7 +58,7 @@ class InsuranceNetworkTypeImplementation {
 
 
 
-  async save(insuranceNetworkTypeData) {
+  async save(insuranceNetworkTypeData, transaction) {
     try {
       //console.log("💾 Guardando tipo de red de seguros en BD:", insuranceNetworkTypeData);
   
@@ -76,7 +76,7 @@ class InsuranceNetworkTypeImplementation {
             CreatedAt: formattedDate, 
             UpdatedAt: formattedDate,
             IsActive: insuranceNetworkTypeData.IsActive !== undefined ? insuranceNetworkTypeData.IsActive : true
-          },
+          }, transaction,
           type: QueryTypes.INSERT,
         }
       );
@@ -87,7 +87,19 @@ class InsuranceNetworkTypeImplementation {
       return OperationResult.failure('InsuranceNetworkTypeSaveError', error);
     }
   }
+
   
+  async startTransaction() {
+    return await sequelize.transaction();
+  }
+
+  async commitTransaction(transaction) {
+    await transaction.commit();
+  }
+
+  async rollbackTransaction(transaction) {
+    await transaction.rollback();
+  }
 
 
   async update(InsuranceNetworkTypeID, updatedFields) {

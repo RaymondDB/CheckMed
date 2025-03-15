@@ -31,6 +31,10 @@ class InsuranceNetworkTypeService {
       return OperationResult.failure('EmptyField');
     }
 
+    if(!ValidationService.isValidId(NetworkTypeID)){
+      console.log("Error: El ID es invalido.");
+      return OperationResult.failure('InvalidID');
+    }
     
     if(!ValidationService.isValidFieldLenght(Name, 50) ||
     !ValidationService.isValidFieldLenght(Description, 255)
@@ -85,10 +89,6 @@ class InsuranceNetworkTypeService {
   async updateInsuranceNetworkType(NetworkTypeID, updatedFields) {
     console.log("🛠️ Buscando tipo de red de seguros con ID:", NetworkTypeID);
 
-    const insuranceNetworkType = await InsuranceNetworkTypeRepository.findById(NetworkTypeID);
-    if (!insuranceNetworkType.success) {
-      return OperationResult.failure(insuranceNetworkType.data);//Devuelve el error encontrado
-    }
 
     if (!updatedFields.Name) {
       console.error("Error: Faltan campos obligatorios en insuranceNetworkTypeData.");

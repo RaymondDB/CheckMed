@@ -37,6 +37,8 @@ class InsuranceNetworkTypeService {
       return OperationResult.failure('InsuranceNetworkTypeAlreadyExisting');
     }
 
+    const transaction = await this.insuranceNetworkTypeRepository.startTransaction();
+
     const insuranceNetworkTypeToSave = {
     ...insuranceNetworkTypeData,
       CreatedAt: new Date(),
@@ -45,7 +47,7 @@ class InsuranceNetworkTypeService {
     };
 
     console.log("Guardando tipo de red de seguros en BD:", insuranceNetworkTypeToSave);
-    const insuranceNetworkTypeResult = await this.insuranceNetworkTypeRepository.save(insuranceNetworkTypeToSave);
+    const insuranceNetworkTypeResult = await this.insuranceNetworkTypeRepository.save(insuranceNetworkTypeToSave, transaction);
 
     if (insuranceNetworkTypeResult.success) {
       console.log("Tipo de red de seguros guardada con éxito:", insuranceNetworkTypeResult.data);
