@@ -1,4 +1,4 @@
-const Doctor = require("../entities/insuranceNetworkType");
+const NetworkType = require("../entities/insuranceNetworkType");
 
 module.exports = {
     InsuranceNetworkTypeCreated: "InsuranceNetworkTypeCreated",
