@@ -1,151 +1,86 @@
 const OperationResult = require("../../helpers/OperationResult");
 const { sequelize } = require("../../infrastructure/db/dbconfig");
-const { QueryTypes } = require("sequelize");
-const moment = require("moment");
+const Patient = require("../../infrastructure/models/UsersPatientModel");
+const moment = require("moment")
+
+const now = moment().format("YYYY-MM-DD HH:mm:ss");
 
 class PatientsImplementation {
   async findById(PatientID) {
     try {
-      console.log("🔍 Buscando paciente con ID:", PatientID);
+      const patient = await Patient.findByPk(PatientID);
 
-      const patient = await sequelize.query(
-        `SELECT * FROM users.Patients WHERE PatientID = :PatientID`,
-        {
-          replacements: { PatientID },
-          type: QueryTypes.SELECT,
-        }
-      );
+      if (!patient) return OperationResult.failure("Paciente no encontrado.");
 
-      if (patient.length === 0) return OperationResult.failure("Paciente no encontrado.");
-
-      return OperationResult.success(patient[0]);
-    } catch (error) {
+      return OperationResult.success(patient);
+    } catch (error) { 
       return OperationResult.failure("Error en la búsqueda de paciente.", error);
     }
   }
 
   async findByEmail(Email) {
     try {
-      console.log("🔍 Buscando paciente con Email:", Email);
+      const patient = await Patient.findOne({ where: { Email } });
 
-      const patient = await sequelize.query(
-        `SELECT * FROM users.Patients WHERE Email = :Email`,
-        {
-          replacements: { Email },
-          type: QueryTypes.SELECT,
-        }
-      );
+      if (!patient) return OperationResult.failure("Paciente no encontrado.");
 
-      if (patient.length === 0) return OperationResult.failure("Paciente no encontrado.");
-
-      return OperationResult.success(patient[0]);
+      return OperationResult.success(patient);
     } catch (error) {
       return OperationResult.failure("Error en la búsqueda de paciente.", error);
     }
   }
 
-  async save(patientData) {
+  async save(patientData, transaction) {
     try {
-        console.log("💾 Guardando paciente en BD:", patientData);
+      const patient = await Patient.create({
+        DateOfBirth: patientData.DateOfBirth,
+        Gender: patientData.Gender,
+        PhoneNumber: patientData.PhoneNumber,
+        Address: patientData.Address,
+        EmergencyContactName: patientData.EmergencyContactName,
+        EmergencyContactPhone: patientData.EmergencyContactPhone,
+        BloodType: patientData.BloodType,
+        Allergies: patientData.Allergies,
+        InsuranceProviderID: patientData.InsuranceProviderID,
+        CreatedAt: now,
+        UpdatedAt: now,
+        IsActive: patientData.IsActive !== undefined ? patientData.IsActive : true,
+      }, { transaction });
 
-        const formattedDate = moment().format("YYYY-MM-DD HH:mm:ss");
-
-        const result = await sequelize.query(
-            `INSERT INTO users.Patients 
-             (DateOfBirth, Gender, PhoneNumber, Address, EmergencyContactName, EmergencyContactPhone, BloodType, Allergies, InsuranceProviderID, CreatedAt, UpdatedAt, IsActive) 
-             VALUES (:DateOfBirth, :Gender, :PhoneNumber, :Address, :EmergencyContactName, :EmergencyContactPhone, :BloodType, :Allergies, :InsuranceProviderID, :CreatedAt, :UpdatedAt, :IsActive)`,
-            {
-                replacements: {
-                    DateOfBirth: patientData.DateOfBirth,
-                    Gender: patientData.Gender,
-                    PhoneNumber: patientData.PhoneNumber,
-                    Address: patientData.Address,
-                    EmergencyContactName: patientData.EmergencyContactName,
-                    EmergencyContactPhone: patientData.EmergencyContactPhone,
-                    BloodType: patientData.BloodType,
-                    Allergies: patientData.Allergies,
-                    InsuranceProviderID: patientData.InsuranceProviderID,
-                    CreatedAt: formattedDate,
-                    UpdatedAt: formattedDate,
-                    IsActive: patientData.IsActive !== undefined ? patientData.IsActive : true,
-                },
-                transaction,
-                type: QueryTypes.INSERT,
-            }
-        );
-
-        return OperationResult.success({ message: "Paciente guardado correctamente", result });
+      return OperationResult.success({ id: patient.PatientID });
     } catch (error) {
-        console.error("❌ Error al guardar el paciente:", error);
-        return OperationResult.failure("Error al guardar el paciente.", error);
+      return OperationResult.failure("Error al guardar el paciente.", error);
     }
   }
 
-
   async update(PatientID, updatedFields) {
     try {
-      console.log("🛠️ Buscando paciente con ID:", PatientID);
+      const patient = await Patient.findByPk(PatientID);
+      if (!patient) return OperationResult.failure("Paciente no encontrado.");
 
-      const patient = await sequelize.query(
-        `SELECT * FROM users.Patients WHERE PatientID = :PatientID`,
-        { replacements: { PatientID }, type: QueryTypes.SELECT }
-      );
+      await patient.update({
+        ...updatedFields,
+        UpdatedAt: new Date()
+      });
 
-      if (!patient.length) {
-        return { success: false, message: "Paciente no encontrado." };
-      }
-
-      console.log("✅ Actualizando paciente con ID:", PatientID, "Campos:", updatedFields);
-
-      const formattedDate = new Date().toISOString().slice(0, 19).replace("T", " ");
-
-      const result = await sequelize.query(
-        `UPDATE users.Patients
-         SET FirstName = :FirstName, LastName = :LastName, Email = :Email, 
-             Password = :Password, UpdatedAt = :UpdatedAt
-         WHERE PatientID = :PatientID`,
-        {
-          replacements: {
-            PatientID: parseInt(PatientID),
-            FirstName: updatedFields.FirstName,
-            LastName: updatedFields.LastName,
-            Email: updatedFields.Email,
-            Password: updatedFields.Password,
-            UpdatedAt: formattedDate,
-          },
-          type: QueryTypes.UPDATE,
-        }
-      );
-
-      return { success: true, message: "Paciente actualizado correctamente", result };
+      return OperationResult.success("Paciente actualizado correctamente.");
     } catch (error) {
-      return { success: false, message: "Error al actualizar el paciente.", error };
+      return OperationResult.failure("Error al actualizar el paciente.", error);
     }
   }
 
   async delete(PatientID) {
     try {
-      console.log("🗑 Desactivando paciente con ID:", PatientID);
+      const patient = await Patient.findByPk(PatientID);
+      if (!patient) return OperationResult.failure("Paciente no encontrado.");
 
-      const updatedAt = new Date().toISOString().slice(0, 19).replace("T", " ");
-
-      const [result] = await sequelize.query(
-        `UPDATE users.Patients 
-         SET IsActive = 0, UpdatedAt = :UpdatedAt 
-         WHERE PatientID = :PatientID`,
-        {
-          replacements: { PatientID, UpdatedAt: updatedAt },
-          type: QueryTypes.UPDATE,
-        }
-      );
-
-      if (result === 0) {
-        return OperationResult.failure("Paciente no encontrado o ya desactivado.");
-      }
+      await patient.update({
+        IsActive: false,
+        UpdatedAt: new Date()
+      });
 
       return OperationResult.success("Paciente desactivado correctamente.");
     } catch (error) {
-      console.error("❌ Error al eliminar paciente:", error);
       return OperationResult.failure("Error al eliminar el paciente.", error);
     }
   }

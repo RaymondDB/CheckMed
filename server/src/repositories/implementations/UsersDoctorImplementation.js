@@ -1,39 +1,38 @@
 const OperationResult = require("../../helpers/OperationResult");
 const { sequelize } = require("../../infrastructure/db/dbconfig");
-const { QueryTypes } = require("sequelize");
-const moment = require("moment");
+const Doctor = require("../../infrastructure/models/UsersDoctorModel");
+const moment = require("moment")
+
+const now = moment().format("YYYY-MM-DD HH:mm:ss");
 
 class DoctorsImplementation {
   async findById(DoctorID) {
     try {
-      console.log("🔍 Buscando doctor con ID:", DoctorID);
+      const doctor = await Doctor.findByPk(DoctorID);
 
-      const doctor = await sequelize.query(
-        `SELECT * FROM users.Doctors WHERE DoctorID = :DoctorID`,
-        { 
-          replacements: { DoctorID }, 
-          type: QueryTypes.SELECT 
-        }
-      );
+      if (!doctor) return OperationResult.failure("Doctor no encontrado.");
 
-      if (doctor.length === 0) return OperationResult.failure("Doctor no encontrado.");
-      
-      return OperationResult.success(doctor[0]);
+      return OperationResult.success(doctor);
     } catch (error) {
       return OperationResult.failure("Error en la búsqueda del doctor.", error);
     }
   }
 
-  
+  async findByLicense(licenseNumber) {
+    try {
+      const doctor = await Doctor.findOne({ where: { LicenseNumber: licenseNumber } });
+
+      if (!doctor) return OperationResult.failure("Doctor no encontrado.");
+
+      return OperationResult.success(doctor);
+    } catch (error) {
+      return OperationResult.failure("Error al buscar el doctor.", error);
+    }
+  }
 
   async findAll() {
     try {
-      console.log("📄 Buscando todos los doctores...");
-
-      const doctors = await sequelize.query(
-        `SELECT * FROM users.Doctors`, 
-        { type: QueryTypes.SELECT }
-      );
+      const doctors = await Doctor.findAll();
 
       return OperationResult.success(doctors);
     } catch (error) {
@@ -41,65 +40,25 @@ class DoctorsImplementation {
     }
   }
 
-  async findByLicense(licenseNumber) {
+  async save(doctorData, transaction) {
     try {
-      const result = await sequelize.query(
-        "SELECT * FROM users.Doctors WHERE LicenseNumber = :licenseNumber",
-        {
-          replacements: { licenseNumber },
-          type: sequelize.QueryTypes.SELECT,
-        }
-      );
+      const doctor = await Doctor.create({
+        SpecialtyID: doctorData.SpecialtyID,
+        LicenseNumber: doctorData.LicenseNumber,
+        PhoneNumber: doctorData.PhoneNumber,
+        YearsOfExperience: doctorData.YearsOfExperience,
+        Education: doctorData.Education,
+        Bio: doctorData.Bio,
+        ConsultationFee: doctorData.ConsultationFee,
+        ClinicAddress: doctorData.ClinicAddress,
+        AvailabilityModelId: doctorData.AvailabilityModelId,
+        LicenseExpirationDate: doctorData.LicenseExpirationDate,
+        CreatedAt: now,
+        UpdatedAt: now,
+        IsActive: doctorData.IsActive ?? true,
+      }, { transaction });
 
-      if (result.length === 0) {
-        return OperationResult.failure("Doctor no encontrado.");
-      }
-
-      return OperationResult.success(result[0]);
-    } catch (error) {
-      console.error("Error en findByLicense:", error);
-      return OperationResult.failure("Error al buscar el doctor.");
-    }
-  }
-
-
-
-
-  async save(doctorData) {
-    try {
-      console.log("💾 Guardando doctor en BD:", doctorData);
-
-      const formattedDate = moment().format("YYYY-MM-DD HH:mm:ss");
-
-      const result = await sequelize.query(
-        `INSERT INTO users.Doctors (SpecialtyID, LicenseNumber, PhoneNumber, YearsOfExperience, 
-          Education, Bio, ConsultationFee, ClinicAddress, AvailabilityModelId, 
-          LicenseExpirationDate, CreatedAt, UpdatedAt, IsActive)
-         VALUES (:SpecialtyID, :LicenseNumber, :PhoneNumber, :YearsOfExperience, 
-         :Education, :Bio, :ConsultationFee, :ClinicAddress, :AvailabilityModelId, 
-         :LicenseExpirationDate, :CreatedAt, :UpdatedAt, :IsActive)`,
-        {
-          replacements: {
-            SpecialtyID: doctorData.SpecialtyID,
-            LicenseNumber: doctorData.LicenseNumber,
-            PhoneNumber: doctorData.PhoneNumber,
-            YearsOfExperience: doctorData.YearsOfExperience,
-            Education: doctorData.Education,
-            Bio: doctorData.Bio,
-            ConsultationFee: doctorData.ConsultationFee,
-            ClinicAddress: doctorData.ClinicAddress,
-            AvailabilityModelId: doctorData.AvailabilityModelId,
-            LicenseExpirationDate: doctorData.LicenseExpirationDate,
-            CreatedAt: formattedDate,
-            UpdatedAt: formattedDate,
-            IsActive: doctorData.IsActive !== undefined ? doctorData.IsActive : true,
-          },
-          transaction,
-          type: QueryTypes.INSERT,
-        }
-      );
-
-      return OperationResult.success({ message: "Doctor guardado correctamente", result });
+      return OperationResult.success({ id: doctor.DoctorID });
     } catch (error) {
       return OperationResult.failure("Error al guardar el doctor.", error);
     }
@@ -107,49 +66,16 @@ class DoctorsImplementation {
 
   async update(DoctorID, updatedFields) {
     try {
-      console.log("🛠️ Buscando doctor con ID:", DoctorID);
+      const doctor = await Doctor.findByPk(DoctorID);
 
-      const doctor = await sequelize.query(
-        `SELECT * FROM users.Doctors WHERE DoctorID = :DoctorID`,
-        { replacements: { DoctorID }, type: QueryTypes.SELECT }
-      );
+      if (!doctor) return OperationResult.failure("Doctor no encontrado.");
 
-      if (!doctor.length) {
-        return OperationResult.failure("Doctor no encontrado.");
-      }
+      await doctor.update({
+        ...updatedFields,
+        UpdatedAt: new Date()
+      });
 
-      console.log("✅ Actualizando doctor con ID:", DoctorID, "Campos:", updatedFields);
-
-      const formattedDate = moment().format("YYYY-MM-DD HH:mm:ss");
-
-      const result = await sequelize.query(
-        `UPDATE users.Doctors
-         SET SpecialtyID = :SpecialtyID, LicenseNumber = :LicenseNumber, PhoneNumber = :PhoneNumber,
-             YearsOfExperience = :YearsOfExperience, Education = :Education, Bio = :Bio,
-             ConsultationFee = :ConsultationFee, ClinicAddress = :ClinicAddress,
-             AvailabilityModelId = :AvailabilityModelId, LicenseExpirationDate = :LicenseExpirationDate,
-             UpdatedAt = :UpdatedAt
-         WHERE DoctorID = :DoctorID`,
-        {
-          replacements: {
-            DoctorID: parseInt(DoctorID),
-            SpecialtyID: updatedFields.SpecialtyID,
-            LicenseNumber: updatedFields.LicenseNumber,
-            PhoneNumber: updatedFields.PhoneNumber,
-            YearsOfExperience: updatedFields.YearsOfExperience,
-            Education: updatedFields.Education,
-            Bio: updatedFields.Bio,
-            ConsultationFee: updatedFields.ConsultationFee,
-            ClinicAddress: updatedFields.ClinicAddress,
-            AvailabilityModelId: updatedFields.AvailabilityModelId,
-            LicenseExpirationDate: updatedFields.LicenseExpirationDate,
-            UpdatedAt: formattedDate,
-          },
-          type: QueryTypes.UPDATE,
-        }
-      );
-
-      return OperationResult.success({ message: "Doctor actualizado correctamente", result });
+      return OperationResult.success("Doctor actualizado correctamente.");
     } catch (error) {
       return OperationResult.failure("Error al actualizar el doctor.", error);
     }
@@ -157,27 +83,17 @@ class DoctorsImplementation {
 
   async delete(DoctorID) {
     try {
-      console.log("🗑 Desactivando doctor con ID:", DoctorID);
+      const doctor = await Doctor.findByPk(DoctorID);
 
-      const updatedAt = moment().format("YYYY-MM-DD HH:mm:ss");
+      if (!doctor) return OperationResult.failure("Doctor no encontrado.");
 
-      const [result] = await sequelize.query(
-        `UPDATE users.Doctors 
-         SET IsActive = 0, UpdatedAt = :UpdatedAt 
-         WHERE DoctorID = :DoctorID`,
-        {
-          replacements: { DoctorID, UpdatedAt: updatedAt },
-          type: QueryTypes.UPDATE,
-        }
-      );
-
-      if (result === 0) {
-        return OperationResult.failure("Doctor no encontrado o ya desactivado.");
-      }
+      await doctor.update({
+        IsActive: false,
+        UpdatedAt: new Date()
+      });
 
       return OperationResult.success("Doctor desactivado correctamente.");
     } catch (error) {
-      console.error("❌ Error al eliminar doctor:", error);
       return OperationResult.failure("Error al eliminar el doctor.", error);
     }
   }

@@ -29,11 +29,11 @@ const UserModel = sequelize.define("users.Users", {
     allowNull: true  // En la BD permite NULL, así que lo dejamos así
   },
   CreatedAt: { 
-    type: DataTypes.DATETIME, 
+    type: DataTypes.DATE, 
     allowNull: true  // Puede ser NULL según la BD
   },
   UpdatedAt: { 
-    type: DataTypes.DATETIME, 
+    type: DataTypes.DATE, 
     allowNull: true  // Puede ser NULL según la BD
   },
   IsActive: { 
@@ -42,7 +42,7 @@ const UserModel = sequelize.define("users.Users", {
     defaultValue: true 
   }
 }, {
-  tableName: "users.Users",  // Nombre exacto de la tabla
+  tableName: "Users",  // Nombre exacto de la tabla
   schema: "users",     // Nombre del esquema en SQL Server
   timestamps: false    // Desactivamos timestamps automáticos de Sequelize
 });

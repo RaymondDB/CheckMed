@@ -1,0 +1,142 @@
+.sidebar {
+    position: relative;
+    width: 240px;
+    background-color: #1C2C57 ;
+    color: white;
+    min-height: 500px;
+    height: 100vh;
+
+}
+
+.logo-img{
+    width: 45px;
+    height: 45px;
+    border-radius: 6px;
+}
+
+.sidebar .logo-content .logo{
+    color:#fff;
+    display: flex;
+    height: 47px;
+    align-items: center;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.logo-content .logo-img{    
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.sidebar .logo-content .logo-text{
+    font-size: 15px;
+    font-weight: 400;
+    margin-top: 5px;
+}
+
+.sidebar .logo-content .logo{
+    margin-top: 10px;
+}
+
+.sidebar ul{
+    margin-top: 40px;
+    margin-left: 10px;
+    margin-right: 10px;
+    align-items: left;
+    justify-content: center;
+    padding: 0;
+}
+
+.sidebar ul li{
+    position: relative;
+    height: 50px;
+    width: 100%;
+    list-style: none;
+    line-height: 50px;   
+    align-items: center;
+}
+
+.sidebar ul li .link{
+    color: #fff;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+
+.sidebar ul li .link:hover {
+    background: #A4B9DD;
+    color: #1C2C57;
+}
+
+
+
+.sidebar ul li .link i{
+    height: 50px;
+    min-width: 50px;
+    border-radius: 12px;
+    line-height: 50px;
+    text-align: center;
+}
+
+.sidebar .link .links_name{
+    pointer-events: none;
+    transition: all 0.5s ease;
+}
+
+.profile_content{
+    position: absolute;
+    color: #fff;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-radius: 10px;
+}
+
+.profile_content .profile{
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 1px;
+    height: 76px;
+    background: #172241;
+    border-radius: 10px;
+    transition: all 0.4s ease;
+}
+
+.profile .profile_details{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    margin-top: 8px;
+    height: 40px;
+}
+
+
+
+.logout-button {
+    height: 50px;
+    width: 50px;
+    border: none;
+    border-radius: 10px;
+    background: #172241;
+    transition: all 0.4s ease;
+    text-align: center;
+}
+
+.logout-button:hover {
+    background-color: #1e2947;
+}
+
+#logout {
+    color: white;
+    font-size: 25px;
+}
+
+

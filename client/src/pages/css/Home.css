@@ -1,0 +1,65 @@
+.Top {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 0px;
+}
+
+.Bottom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Bottom .logo {
+  width: 400px;
+  height: 400px;
+  transform: translateY(50px);
+}
+
+#root {
+  height: 100vh;
+  width: 100%;
+}
+
+.app {
+  display: flex;
+  flex-direction: row;
+}
+
+.content {
+  background: white;
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  padding-left: 10px;
+}
+
+
+.estiloWidget {
+  background-color: #1C2C57;
+  min-width: 32%;
+  height: 240px;
+  margin-top: 5px;
+  margin-bottom:5px;
+  margin-right: 10px;
+  padding: 10px;
+  border-radius: 10px
+}
+
+.estiloDetalles {
+  color: white;
+  margin-left: 10px;
+  width: 100%;
+  height: 100%;
+}
+
+.estiloTitulo {
+  font-Size: 40px;
+  font-weight: 400px;
+}
+
+.estiloRespuesta {
+  padding: 0px;
+  font-size: 20px;
+  font-weight: 100px;
+}
