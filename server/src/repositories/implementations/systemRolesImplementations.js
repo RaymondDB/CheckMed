@@ -1,87 +1,95 @@
 const OperationResult = require("../../helpers/OperationResult");
-const { sequelize } = require("../../infrastructure/db/dbconfig");
-const { QueryTypes } = require("sequelize");
+const RoleModel = require("../../infrastructure/Models/RolesModel");
 const moment = require("moment");
 
+const now = moment().format("YYYY-MM-DD HH:mm:ss");
+
 class RolesImplementation {
-  async findById(RoleID) {
+  async findById(roleId) {
     try {
-      console.log("🔍 Buscando rol con ID:", RoleID);
+      const role = await RoleModel.findByPk(roleId);
 
-      const role = await sequelize.query(
-        `SELECT * FROM system.Roles WHERE roleId = :RoleID`,
-        { replacements: { RoleID }, type: QueryTypes.SELECT }
-      );
+      if (!role) return OperationResult.failure("Rol no encontrado.");
 
-      if (!role.length) return OperationResult.failure("Rol no encontrado.");
-
-      return OperationResult.success(role[0]);
+      return OperationResult.success(role);
     } catch (error) {
       return OperationResult.failure("Error en la búsqueda del rol.", error);
     }
   }
 
-  async findByName(RoleName) {
+  async findByName(roleName) {
     try {
-      console.log("🔍 Buscando rol con nombre:", RoleName);
+      const role = await RoleModel.findOne({ where: { roleName } });
 
-      const role = await sequelize.query(
-        `SELECT * FROM system.Roles WHERE roleName = :RoleName`,
-        { replacements: { RoleName }, type: QueryTypes.SELECT }
-      );
+      if (!role) return OperationResult.failure("Rol no encontrado.");
 
-      if (!role.length) return OperationResult.failure("Rol no encontrado.");
-
-      return OperationResult.success(role[0]);
+      return OperationResult.success(role);
     } catch (error) {
       return OperationResult.failure("Error en la búsqueda del rol.", error);
     }
   }
 
-  async save(roleData) {
+  async findAll() {
     try {
-      console.log("💾 Guardando rol en BD:", roleData);
+      const roles = await RoleModel.findAll();
 
-      const createdAt = moment().format("YYYY-MM-DD HH:mm:ss");
+      return OperationResult.success(roles);
+    } catch (error) {
+      return OperationResult.failure("Error al obtener los roles.", error);
+    }
+  }
 
-      const result = await sequelize.query(
-        `INSERT INTO system.Roles (RoleName, CreatedAt, UpdatedAt, IsActive)
-   VALUES (:RoleName, :CreatedAt, :UpdatedAt, :IsActive)`,
+  async save(roleData, transaction) {
+    try {
+      const role = await RoleModel.create(
         {
-          replacements: {
-            RoleName: roleData.RoleName,
-            CreatedAt: createdAt,
-            UpdatedAt: createdAt,
-            IsActive:
-              roleData.IsActive !== undefined ? roleData.IsActive : true,
-          },
-          type: QueryTypes.INSERT,
-        }
+          roleName: roleData.RoleName,
+          isActive: roleData.IsActive !== undefined ? roleData.IsActive : true,
+          createdAt: now,
+          updatedAt: now,
+        },
+        { transaction }
       );
 
       return OperationResult.success({
         message: "Rol guardado correctamente",
-        result,
+        id: role.roleId,
       });
     } catch (error) {
       return OperationResult.failure("Error al guardar el rol.", error);
     }
   }
 
-  async delete(RoleID) {
+  async update(roleId, updatedFields) {
     try {
-      console.log("Eliminando rol con ID:", RoleID);
+      const role = await RoleModel.findByPk(roleId);
 
-      const result = await sequelize.query(
-        `DELETE FROM system.Roles WHERE roleId = :RoleID`,
-        { replacements: { RoleID }, type: QueryTypes.DELETE }
-      );
+      if (!role) return OperationResult.failure("Rol no encontrado.");
 
-      if (result === 0) {
-        return OperationResult.failure("Rol no encontrado.");
-      }
+      await role.update({
+        ...updatedFields,
+        updatedAt: new Date(),
+      });
 
-      return OperationResult.success("Rol eliminado correctamente.");
+      return OperationResult.success("Rol actualizado correctamente.");
+    } catch (error) {
+      return OperationResult.failure("Error al actualizar el rol.", error);
+    }
+  }
+
+  async delete(roleId) {
+    try {
+      const role = await RoleModel.findByPk(roleId);
+
+      if (!role) return OperationResult.failure("Rol no encontrado.");
+
+      // Desactivación lógica
+      await role.update({
+        isActive: false,
+        updatedAt: new Date(),
+      });
+
+      return OperationResult.success("Rol desactivado correctamente.");
     } catch (error) {
       return OperationResult.failure("Error al eliminar el rol.", error);
     }

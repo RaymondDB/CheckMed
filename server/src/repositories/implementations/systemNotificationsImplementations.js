@@ -1,22 +1,18 @@
 const OperationResult = require("../../helpers/OperationResult");
-const { sequelize } = require("../../infrastructure/db/dbconfig");
-const { QueryTypes } = require("sequelize");
+const Notification = require("../../infrastructure/Models/NotificationsModel");
 const moment = require("moment");
 
+const now = moment().format("YYYY-MM-DD HH:mm:ss");
+
 class NotificationsImplementation {
-  async findById(NotificationID) {
+  async findById(notificationId) {
     try {
-      console.log("🔍 Buscando notificación con ID:", NotificationID);
+      const notification = await Notification.findByPk(notificationId);
 
-      const notification = await sequelize.query(
-        `SELECT * FROM system.Notifications WHERE notificationId = :NotificationID`,
-        { replacements: { NotificationID }, type: QueryTypes.SELECT }
-      );
-
-      if (!notification.length)
+      if (!notification)
         return OperationResult.failure("Notificación no encontrada.");
 
-      return OperationResult.success(notification[0]);
+      return OperationResult.success(notification);
     } catch (error) {
       return OperationResult.failure(
         "Error en la búsqueda de la notificación.",
@@ -27,12 +23,7 @@ class NotificationsImplementation {
 
   async findAll() {
     try {
-      console.log("📄 Buscando todas las notificaciones...");
-
-      const notifications = await sequelize.query(
-        `SELECT * FROM system.Notifications`,
-        { type: QueryTypes.SELECT }
-      );
+      const notifications = await Notification.findAll();
 
       return OperationResult.success(notifications);
     } catch (error) {
@@ -43,28 +34,22 @@ class NotificationsImplementation {
     }
   }
 
-  async save(notificationData) {
+  async save(notificationData, transaction) {
     try {
-      console.log("💾 Guardando notificación en BD:", notificationData);
-
-      const sentAt = moment().format("YYYY-MM-DD HH:mm:ss");
-
-      const result = await sequelize.query(
-        `INSERT INTO system.Notifications (userId, message, sentAt)
-         VALUES (:UserID, :Message, :SentAt)`,
+      const notification = await Notification.create(
         {
-          replacements: {
-            UserID: notificationData.UserID,
-            Message: notificationData.Message,
-            SentAt: sentAt,
-          },
-          type: QueryTypes.INSERT,
-        }
+          userId: notificationData.UserID,
+          message: notificationData.Message,
+          sentAt: now,
+          createdAt: now,
+          updatedAt: now,
+        },
+        { transaction }
       );
 
       return OperationResult.success({
         message: "Notificación guardada correctamente",
-        result,
+        id: notification.notificationId,
       });
     } catch (error) {
       return OperationResult.failure(
@@ -74,18 +59,35 @@ class NotificationsImplementation {
     }
   }
 
-  async delete(NotificationID) {
+  async update(notificationId, updatedFields) {
     try {
-      console.log("Eliminando notificación con ID:", NotificationID);
+      const notification = await Notification.findByPk(notificationId);
 
-      const result = await sequelize.query(
-        `DELETE FROM system.Notifications WHERE notificationId = :NotificationID`,
-        { replacements: { NotificationID }, type: QueryTypes.DELETE }
-      );
-
-      if (result === 0) {
+      if (!notification)
         return OperationResult.failure("Notificación no encontrada.");
-      }
+
+      await notification.update({
+        ...updatedFields,
+        updatedAt: new Date(),
+      });
+
+      return OperationResult.success("Notificación actualizada correctamente.");
+    } catch (error) {
+      return OperationResult.failure(
+        "Error al actualizar la notificación.",
+        error
+      );
+    }
+  }
+
+  async delete(notificationId) {
+    try {
+      const notification = await Notification.findByPk(notificationId);
+
+      if (!notification)
+        return OperationResult.failure("Notificación no encontrada.");
+
+      await notification.destroy();
 
       return OperationResult.success("Notificación eliminada correctamente.");
     } catch (error) {

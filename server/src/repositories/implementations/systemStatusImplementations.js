@@ -1,85 +1,96 @@
 const OperationResult = require("../../helpers/OperationResult");
-const { sequelize } = require("../../infrastructure/db/dbconfig");
-const { QueryTypes } = require("sequelize");
+const StatusModel = require("../../infrastructure/models/StatusModel");
 const moment = require("moment");
 
+const now = moment().format("YYYY-MM-DD HH:mm:ss");
+
 class StatusImplementation {
-  async findById(StatusID) {
+  async findById(statusId) {
     try {
-      console.log("🔍 Buscando estado con ID:", StatusID);
+      console.log("🔍 Buscando estado con ID:", statusId);
 
-      const status = await sequelize.query(
-        `SELECT * FROM system.Status WHERE statusId = :StatusID`,
-        { replacements: { StatusID }, type: QueryTypes.SELECT }
-      );
+      const status = await StatusModel.findByPk(statusId);
 
-      if (!status.length)
-        return OperationResult.failure("Estado no encontrado.");
+      if (!status) return OperationResult.failure("Estado no encontrado.");
 
-      return OperationResult.success(status[0]);
+      return OperationResult.success(status);
     } catch (error) {
       return OperationResult.failure("Error en la búsqueda del estado.", error);
     }
   }
 
-  async findByName(StatusName) {
+  async findByName(statusName) {
     try {
-      console.log("🔍 Buscando estado con nombre:", StatusName);
+      console.log("🔍 Buscando estado con nombre:", statusName);
 
-      const status = await sequelize.query(
-        `SELECT * FROM system.Status WHERE statusName = :StatusName`,
-        { replacements: { StatusName }, type: QueryTypes.SELECT }
-      );
+      const status = await StatusModel.findOne({ where: { statusName } });
 
-      if (!status.length)
-        return OperationResult.failure("Estado no encontrado.");
+      if (!status) return OperationResult.failure("Estado no encontrado.");
 
-      return OperationResult.success(status[0]);
+      return OperationResult.success(status);
     } catch (error) {
       return OperationResult.failure("Error en la búsqueda del estado.", error);
     }
   }
 
-  async save(statusData) {
+  async findAll() {
+    try {
+      const statuses = await StatusModel.findAll();
+
+      return OperationResult.success(statuses);
+    } catch (error) {
+      return OperationResult.failure("Error al obtener los estados.", error);
+    }
+  }
+
+  async save(statusData, transaction) {
     try {
       console.log("💾 Guardando estado en BD:", statusData);
 
-      const createdAt = moment().format("YYYY-MM-DD HH:mm:ss");
-
-      const result = await sequelize.query(
-        `INSERT INTO system.Status (statusName, createdAt, updatedAt)
-         VALUES (:StatusName, :CreatedAt, :UpdatedAt)`,
+      const newStatus = await StatusModel.create(
         {
-          replacements: {
-            StatusName: statusData.StatusName,
-            CreatedAt: createdAt,
-            UpdatedAt: createdAt,
-          },
-          type: QueryTypes.INSERT,
-        }
+          statusName: statusData.StatusName,
+          createdAt: now,
+          updatedAt: now,
+        },
+        { transaction }
       );
 
       return OperationResult.success({
         message: "Estado guardado correctamente",
-        result,
+        id: newStatus.statusId,
       });
     } catch (error) {
       return OperationResult.failure("Error al guardar el estado.", error);
     }
   }
 
-  async delete(StatusID) {
+  async update(statusId, updatedFields) {
     try {
-      console.log(" Eliminando estado con ID:", StatusID);
+      const status = await StatusModel.findByPk(statusId);
 
-      const result = await sequelize.query(
-        `DELETE FROM system.Status WHERE statusId = :StatusID`,
-        { replacements: { StatusID }, type: QueryTypes.DELETE }
-      );
+      if (!status) return OperationResult.failure("Estado no encontrado.");
 
-      if (result === 0) {
-        return OperationResult.failure("Estado no encontrado.");
-      }
+      await status.update({
+        ...updatedFields,
+        updatedAt: new Date(),
+      });
+
+      return OperationResult.success("Estado actualizado correctamente.");
+    } catch (error) {
+      return OperationResult.failure("Error al actualizar el estado.", error);
+    }
+  }
+
+  async delete(statusId) {
+    try {
+      console.log("🗑️ Eliminando estado con ID:", statusId);
+
+      const status = await StatusModel.findByPk(statusId);
+
+      if (!status) return OperationResult.failure("Estado no encontrado.");
+
+      await status.destroy();
 
       return OperationResult.success("Estado eliminado correctamente.");
     } catch (error) {
