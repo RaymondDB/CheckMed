@@ -1,28 +1,95 @@
-const sequelize = require("../config/dbconfig");
+const { sequelize } = require("../db/dbconfig"); 
 const { DataTypes } = require("sequelize");
 
-const InsuranceProviderModel = sequelize.define("insurance.InsuranceProviders", {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  name: { type: DataTypes.STRING, allowNull: false },
-  contactNumber: { type: DataTypes.STRING, allowNull: false },
-  email: { type: DataTypes.STRING, allowNull: false, unique: true },
-  website: { type: DataTypes.STRING, allowNull: true },
-  address: { type: DataTypes.STRING, allowNull: false },
-  city: { type: DataTypes.STRING, allowNull: true },
-  state: { type: DataTypes.STRING, allowNull: true },
-  country: { type: DataTypes.STRING, allowNull: true },
-  zipCode: { type: DataTypes.STRING, allowNull: true },
-  coverageDetails: { type: DataTypes.STRING, allowNull: false },
-  logoUrl: { type: DataTypes.STRING, allowNull: true },
-  isPreferred: { type: DataTypes.BOOLEAN, defaultValue: false },
-  networkTypeId: { type: DataTypes.INTEGER, allowNull: true },
-  customerSupportContact: { type: DataTypes.STRING, allowNull: true },
-  acceptedRegions: { type: DataTypes.STRING, allowNull: true },
-  maxCoverageAmount: { type: DataTypes.DECIMAL(10, 2), allowNull: true  },
-  isActive: { type: DataTypes.BOOLEAN}
+const InsuranceProviderModel = sequelize.define("Insurance.InsuranceProviders", {
+  InsuranceProviderID: { 
+    type: DataTypes.INTEGER, 
+    primaryKey: true, 
+    autoIncrement: true 
+  },
+  Name: { 
+    type: DataTypes.STRING(100), 
+    allowNull: false 
+  },
+  ContactNumber: { 
+    type: DataTypes.STRING(15), 
+    allowNull: false
+   },
+  Email: { 
+    type: DataTypes.STRING(100), 
+    allowNull: false, 
+    unique: true 
+  },
+  Website: { 
+    type: DataTypes.STRING(255), 
+    allowNull: true 
+  },
+  Address: { 
+    type: DataTypes.STRING(255), 
+    allowNull: false 
+  },
+  City: { 
+    type: DataTypes.STRING(100), 
+    allowNull: true 
+  },
+  State: { 
+    type: DataTypes.STRING(100), 
+    allowNull: true 
+  },
+  Country: { 
+    type: DataTypes.STRING(100), 
+    allowNull: true 
+  },
+  ZipCode: { 
+    type: DataTypes.STRING(10), 
+    allowNull: true 
+  },
+  CoverageDetails: { 
+    type: DataTypes.TEXT, 
+    allowNull: false 
+  },
+  LogoUrl: { 
+    type: DataTypes.STRING(255), 
+    allowNull: true 
+  },
+  IsPreferred: { 
+    type: DataTypes.BOOLEAN,
+    allowNull: false, 
+    defaultValue: true
+  },
+  NetworkTypeId: { 
+    type: DataTypes.INTEGER, 
+    allowNull: false 
+  },
+  CustomerSupportContact: { 
+    type: DataTypes.STRING(15), 
+    allowNull: true 
+  },
+  AcceptedRegions: { 
+    type: DataTypes.STRING(255), 
+    allowNull: true 
+  },
+  MaxCoverageAmount: { 
+    type: DataTypes.DECIMAL(10, 2), 
+    allowNull: true  
+  },
+  CreatedAt: { 
+    type: DataTypes.DATEONLY,
+    allowNull: false,
+  },
+  UpdatedAt: { 
+    type: DataTypes.DATEONLY,
+    allowNull: false,
+  },
+  IsActive: { 
+    type: DataTypes.BOOLEAN,
+    allowNull: false, 
+    defaultValue: true
+  }
 }, {
-  tableName: "insurance.InsuranceProviders",
-  timestamps: true
+  tableName: "InsuranceProviders",
+  schema: "Insurance",
+  timestamps: false
 });
 
 module.exports = InsuranceProviderModel;

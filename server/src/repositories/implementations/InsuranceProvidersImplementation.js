@@ -1,10 +1,10 @@
 const { sequelize } = require("../../infrastructure/db/dbconfig");
+const InsuranceProviders = require("../../infrastructure/models/InsuranceProviderModel")
+const InsuranceNetworkType = require("../../infrastructure/models/InsuranceNetworkTypeModel")
 const OperationResult = require("../../domain/valueObjects/OperationResult");
 const ValidationService = require("../../domain/services/validationService");
-const { QueryTypes } = require("sequelize");
-const moment = require("moment");
 
-
+const today = new Date().toISOString().split("T")[0];
 
 class InsuranceProvidersImplementation {
     
@@ -17,25 +17,22 @@ class InsuranceProvidersImplementation {
         return OperationResult.failure('InvalidID')
       }
 
-      const insuranceProvider = await sequelize.query(
-        `SELECT * FROM insurance.InsuranceProviders WHERE InsuranceProviderID = :InsuranceProviderID`,
-        { 
-          replacements: { InsuranceProviderID }, 
-          type: QueryTypes.SELECT 
-        }
-      );
+      const insuranceProvider = await InsuranceProviders.findByPk(InsuranceProviderID);
 
-
-      if (insuranceProvider.length === 0) {
+      if (!insuranceProvider) {
         console.error("Proveedor de seguros no encontrado.")
         return OperationResult.failure('InsuranceProviderNotFound');
       } 
       
-      return OperationResult.success(insuranceProvider[0]);
+      console.log("El proveedor de seguros ha sido encontrado correctamente.")
+      return OperationResult.success(insuranceProvider);
+
     } catch (error) {
       return OperationResult.failure('InsuranceProviderSearchError', error);
     }
   }
+
+
 
   async findInsuranceProviderNetworkType(InsuranceProviderNetworkTypeID) {
     try {
@@ -46,21 +43,15 @@ class InsuranceProvidersImplementation {
         return OperationResult.failure('InvalidNetworkTypeID')
       }
 
-      const insuranceProvider = await sequelize.query(
-        `SELECT * FROM insurance.NetworkType WHERE NetworkTypeId = :InsuranceProviderNetworkTypeID`,
-        { 
-          replacements: { InsuranceProviderNetworkTypeID }, 
-          type: QueryTypes.SELECT 
-        }
-      );
+      const insuranceProviderNetworkType = await InsuranceNetworkType.findByPk(InsuranceProviderNetworkTypeID);
 
-
-      if (insuranceProvider.length === 0) {
+      if (!insuranceProviderNetworkType) {
         console.error("El ID otorgado del tipo de red de seguros al que pertenece el proveedor de seguros no ha sido encontrado.")
         return OperationResult.failure('InsuranceProviderNetworkTypeNotFound');
       } 
       
-      return OperationResult.success(insuranceProvider[0]);
+      return OperationResult.success(insuranceProviderNetworkType);
+
     } catch (error) {
       return OperationResult.failure('InsuranceProviderNetworkTypeSearchError', error);
     }
@@ -72,35 +63,21 @@ class InsuranceProvidersImplementation {
     try {
       //console.log("📄 Buscando todos los proveedores de seguros...");
 
-      const insuranceProvider = await sequelize.query(
-        `SELECT * FROM insurance.InsuranceProviders`, 
-        { type: QueryTypes.SELECT }
-      );
+      const insuranceProvider = await InsuranceProviders.findAll();
 
-      console.log("Proveedor de seguros ha sido encontrado correctamente.")
       return OperationResult.success(insuranceProvider);
     } catch (error) {
       return OperationResult.failure('InsuranceProviderSearchListError', error);
     }
   }
 
+
+
   async save(insuranceProviderData, transaction) {
     try {
       //console.log("💾 Guardando proveedor de seguros en BD:", insuranceProviderData);
 
-      const formattedDate = moment().format("YYYY-MM-DD HH:mm:ss");
-
-      const result = await sequelize.query(
-        `SET IDENTITY_INSERT insurance.InsuranceProviders ON;
-        INSERT INTO insurance.InsuranceProviders (InsuranceProviderID, Name, ContactNumber, Email, Website, Address,
-        City, State, Country, ZipCode, CoverageDetails, LogoUrl, IsPreferred, NetworkTypeId, 
-        CustomerSupportContact, AcceptedRegions, MaxCoverageAmount, CreatedAt, UpdatedAt, IsActive)
-         VALUES (:InsuranceProviderID, :Name, :ContactNumber, :Email, 
-          :Website, :Address, :City, :State, :Country, 
-         :ZipCode, :CoverageDetails, :LogoUrl, :IsPreferred, :NetworkTypeId, :CustomerSupportContact,
-         :AcceptedRegions, :MaxCoverageAmount, :CreatedAt, :UpdatedAt, :IsActive)`,
-        {
-          replacements: {
+      const insuranceProvider = await InsuranceProviders.create({
             InsuranceProviderID: insuranceProviderData.InsuranceProviderID,
             Name: insuranceProviderData.Name,
             ContactNumber: insuranceProviderData.ContactNumber,
@@ -118,109 +95,69 @@ class InsuranceProvidersImplementation {
             CustomerSupportContact: insuranceProviderData.CustomerSupportContact,
             AcceptedRegions: insuranceProviderData.AcceptedRegions,
             MaxCoverageAmount: insuranceProviderData.MaxCoverageAmount,
-            CreatedAt: formattedDate,
-            UpdatedAt: formattedDate,
-            IsActive: insuranceProviderData.IsActive !== undefined ? insuranceProviderData.IsActive : true,
-          }, transaction,
-          type: QueryTypes.INSERT,
-        }
-      );
+            CreatedAt: today,
+            UpdatedAt: today,
+            IsActive: insuranceProviderData.IsActive ?? true,
+          }, { transaction });
 
-      console.log("Proveedor de seguros guardado correctamente.")
-      return OperationResult.success(result, 'InsuranceProviderSaveCompleted');
+      return OperationResult.success({id: insuranceProvider.InsuranceProviderID}, 'InsuranceProviderSaveCompleted');
     } catch (error) {
       return OperationResult.failure('InsuranceProviderSaveError', error);
     }
   }
-
-  async startTransaction() {
-    return await sequelize.transaction();
-  }
-
-  async commitTransaction(transaction) {
-    await transaction.commit();
-  }
-
-  async rollbackTransaction(transaction) {
-    await transaction.rollback();
-  }
   
+
   
   async update(InsuranceProviderID, updatedFields) {
     try {
       //console.log("✅ Actualizando proveedor de seguros con ID:", InsuranceProviderID, "Campos:", updatedFields);
 
-      const formattedDate = moment().format("YYYY-MM-DD HH:mm:ss");
+      const insuranceProvider = await InsuranceProviders.findByPk(InsuranceProviderID);
 
-      const result = await sequelize.query(
-        `UPDATE insurance.InsuranceProviders
-         SET Name = :Name, ContactNumber = :ContactNumber, 
-         Email = :Email, Website = :Website, Address = :Address, City = :City, State = :State, 
-         Country = :Country, ZipCode = :ZipCode, CoverageDetails = :CoverageDetails, LogoUrl = :LogoUrl,
-         IsPreferred = :IsPreferred, NetworkTypeId = :NetworkTypeId, CustomerSupportContact = :CustomerSupportContact,
-         AcceptedRegions = :AcceptedRegions, MaxCoverageAmount = :MaxCoverageAmount, IsActive = :IsActive,
-         UpdatedAt = :UpdatedAt   
-        WHERE InsuranceProviderID = :InsuranceProviderID`,
-        {
-          replacements: {
-            InsuranceProviderID: parseInt(InsuranceProviderID),
-            Name: updatedFields.Name,
-            ContactNumber: updatedFields.ContactNumber,
-            Email: updatedFields.Email,
-            Website: updatedFields.Website,
-            Address: updatedFields.Address,
-            City: updatedFields.City,
-            State: updatedFields.State,
-            Country: updatedFields.Country,
-            ZipCode: updatedFields.ZipCode,
-            CoverageDetails: updatedFields.CoverageDetails,
-            LogoUrl: updatedFields.LogoUrl,
-            IsPreferred: updatedFields.IsPreferred,
-            NetworkTypeId: updatedFields.NetworkTypeId,
-            CustomerSupportContact: updatedFields.CustomerSupportContact,
-            AcceptedRegions: updatedFields.AcceptedRegions,
-            MaxCoverageAmount: updatedFields.MaxCoverageAmount,
-            IsActive: updatedFields.IsActive,
-            UpdatedAt: formattedDate,
-          },
-          type: QueryTypes.UPDATE,
-        }
-      );
+      if (!insuranceProvider) {
+        console.error("Proveedor de seguros no encontrado.")
+        return OperationResult.failure('InsuranceProviderNotFound');
+      }; 
+
+
+      await insuranceProvider.update({
+            ...updatedFields,
+            UpdatedAt: new Date()
+      });
 
       console.log("Proveedor de seguros actualizado correctamente.")
-      return OperationResult.success('InsuranceProviderUpdateCompleted', result );
+      return OperationResult.success('InsuranceProviderUpdateCompleted', insuranceProvider );
+      
     } catch (error) {
       console.log(error)
+      console.error("Error al actualizar proveedor de seguros:", error);
       return OperationResult.failure('InsuranceProviderUpdateError', error);
     }
   }
+
+
 
   async delete(InsuranceProviderID) {
     try {
       //console.log("🗑 Desactivando proveedor de seguros con ID:", InsuranceProviderID);
 
-      const updatedAt = moment().format("YYYY-MM-DD HH:mm:ss");
+      const insuranceProvider = await InsuranceProviders.findByPk(InsuranceProviderID);
 
-      const [result] = await sequelize.query(
-        `UPDATE insurance.InsuranceProviders 
-         SET IsActive = 0, UpdatedAt = :UpdatedAt 
-         WHERE InsuranceProviderID= :InsuranceProviderID`,
-        {
-          replacements: { InsuranceProviderID, UpdatedAt: updatedAt },
-          type: QueryTypes.UPDATE,
-        }
-      );
-
-
-      if (result === 0) {
+      if (!insuranceProvider) {
         console.error("Proveedor de seguros no encontrado o ya eliminado.")
         return OperationResult.failure('InsuranceProviderotFoundOrDeleted');
-      } 
+      }; 
+
+      await insuranceProvider.update({
+        IsActive: false,
+        UpdatedAt: new Date()
+      });
 
       console.log("Proveedor de seguros desactivado correctamente.")
       return OperationResult.success('InsuranceProviderDeleteCompleted');
+
     } catch (error) {
-      //console.error("❌ Error al eliminar proveedor de seguros:", error);
+      console.error("Error al eliminar proveedor de seguros:", error);
       return OperationResult.failure('InsuranceProviderDeleteError', error);
     }
   }

@@ -1,9 +1,9 @@
 const { sequelize } = require("../../infrastructure/db/dbconfig");
+const InsuranceNetworkType = require("../../infrastructure/models/InsuranceNetworkTypeModel")
 const OperationResult = require("../../domain/valueObjects/OperationResult");
 const ValidationService = require("../../domain/services/validationService");
-const { QueryTypes } = require("sequelize");
-const moment = require("moment");
 
+const today = new Date().toISOString().split("T")[0];
 
 class InsuranceNetworkTypeImplementation {
 
@@ -16,23 +16,18 @@ class InsuranceNetworkTypeImplementation {
         return OperationResult.failure('InvalidID')
       }
 
-      const insuranceNetworkType = await sequelize.query(
-        `SELECT * FROM insurance.NetworkType WHERE NetworkTypeID = :InsuranceNetworkTypeID`, 
-        { 
-          replacements: { InsuranceNetworkTypeID }, 
-          type: QueryTypes.SELECT 
-        }
-      );
+      const insuranceNetworkType = await InsuranceNetworkType.findByPk(InsuranceNetworkTypeID);
 
-
-      if (insuranceNetworkType.length === 0) {
+      if (!insuranceNetworkType) {
         console.error("Tipo de red de seguros no encontrado.")
         return OperationResult.failure('InsuranceNetworkTypeNotFound');
       } 
       
       console.log("Tipo de red de seguros ha sido encontrado correctamente.")
-      return OperationResult.success(insuranceNetworkType[0]);
+      return OperationResult.success(insuranceNetworkType);
+
     } catch (error) {
+      console.log(error)
       return OperationResult.failure('InsuranceNetworkTypeSearchError', error);
     }
   }
@@ -44,12 +39,9 @@ class InsuranceNetworkTypeImplementation {
     try {
       //console.log("📄 Buscando todos los tipos de redes de seguros...");
 
-      const insuranceNetworkType = await sequelize.query(
-        `SELECT * FROM insurance.NetworkType`, 
-        { type: QueryTypes.SELECT }
-      );
+      const insuranceNetworkTypes = await InsuranceNetworkType.findAll();
 
-      return OperationResult.success(insuranceNetworkType);
+      return OperationResult.success(insuranceNetworkTypes);
     } catch (error) {
       return OperationResult.failure('InsuranceNetworkTypeSearchListError', error);
     }
@@ -61,71 +53,44 @@ class InsuranceNetworkTypeImplementation {
   async save(insuranceNetworkTypeData, transaction) {
     try {
       //console.log("💾 Guardando tipo de red de seguros en BD:", insuranceNetworkTypeData);
-  
-      const formattedDate = moment().format("YYYY-MM-DD HH:mm:ss");
 
-      const result = await sequelize.query(
-        `SET IDENTITY_INSERT insurance.NetworkType ON;
-        INSERT INTO insurance.NetworkType (NetworkTypeId, Name, Description, CreatedAt, UpdatedAt, IsActive)
-         VALUES (:NetworkTypeId, :Name, :Description, :CreatedAt, :UpdatedAt, :IsActive)`,
-        {
-          replacements: {
-            NetworkTypeId: insuranceNetworkTypeData.NetworkTypeID,
-            Name: insuranceNetworkTypeData.Name,
-            Description: insuranceNetworkTypeData.Description,
-            CreatedAt: formattedDate, 
-            UpdatedAt: formattedDate,
-            IsActive: insuranceNetworkTypeData.IsActive !== undefined ? insuranceNetworkTypeData.IsActive : true
-          }, transaction,
-          type: QueryTypes.INSERT,
-        }
-      );
+        const insuranceNetworkType = await InsuranceNetworkType.create({
+          NetworkTypeId: insuranceNetworkTypeData.NetworkTypeID,
+          Name: insuranceNetworkTypeData.Name,
+          Description: insuranceNetworkTypeData.Description,
+          CreatedAt: today,
+          UpdatedAt: today,
+          IsActive: insuranceNetworkTypeData.IsActive ?? true,
+         }, { transaction }); 
       
-      console.log("Tipo de red de seguros guardado correctamente.")
-      return OperationResult.success(result, 'InsuranceNetworkTypeSaveCompleted');
+      return OperationResult.success({id: insuranceNetworkType.NetworkTypeId}, 'InsuranceNetworkTypeSaveCompleted');
     } catch (error) {
       return OperationResult.failure('InsuranceNetworkTypeSaveError', error);
     }
   }
 
-  
-  async startTransaction() {
-    return await sequelize.transaction();
-  }
-
-  async commitTransaction(transaction) {
-    await transaction.commit();
-  }
-
-  async rollbackTransaction(transaction) {
-    await transaction.rollback();
-  }
 
 
   async update(InsuranceNetworkTypeID, updatedFields) {
     try {
       //console.log("✅ Actualizando tipo de red de seguros con ID:", InsuranceNetworkTypeID, "Campos:", updatedFields);
 
-      const formattedDate = new Date().toISOString().slice(0, 19).replace("T", " ");
+      const insuranceNetworkType = await InsuranceNetworkType.findByPk(InsuranceNetworkTypeID);
 
-      const result = await sequelize.query(
-        `UPDATE insurance.NetworkType
-         SET Name = :Name, Description = :Description, UpdatedAt = :UpdatedAt, IsActive = :IsActive
-         WHERE NetworkTypeId = :InsuranceNetworkTypeID`,
-        {
-          replacements: {
-            InsuranceNetworkTypeID: parseInt(InsuranceNetworkTypeID),
-            Name: updatedFields.Name,
-            Description: updatedFields.Description,
-            IsActive: updatedFields.IsActive,
-            UpdatedAt: formattedDate,
-          },
-          type: QueryTypes.UPDATE,
-        }
-      );
+      if (!insuranceNetworkType) {
+        console.error("Tipo de red de seguros no encontrado.")
+        return OperationResult.failure('InsuranceNetworkTypeNotFound');
+      };
+
+
+      await insuranceNetworkType.update({
+            ...updatedFields,
+            UpdatedAt: new Date()
+      });
 
       console.log("Tipo de red de seguros actualizado correctamente.")
-      return OperationResult.success('InsuranceNetworkTypeUdateCompleted', result );
+      return OperationResult.success('InsuranceNetworkTypeUdateCompleted');
+      
     } catch (error) {
       console.error("Ha ocurrido un error al intentar actualizar los campos:", error)
       return OperationResult.failure('InsuranceNetworkTypeUpdateError', error);
@@ -138,27 +103,23 @@ class InsuranceNetworkTypeImplementation {
     try {
       //console.log("🗑 Desactivando tipo de red de seguros con ID:", InsuranceNetworkTypeID);
 
-      const updatedAt = new Date().toISOString().slice(0, 19).replace("T", " ");
-      
-      const [result] = await sequelize.query(
-        `UPDATE insurance.NetworkType
-         SET IsActive = 0, UpdatedAt = :UpdatedAt 
-         WHERE NetworkTypeId= :InsuranceNetworkTypeID`,
-        {
-          replacements: { InsuranceNetworkTypeID, UpdatedAt: updatedAt },
-          type: QueryTypes.UPDATE,
-        }
-      );
+      const insuranceNetworkType = await InsuranceNetworkType.findByPk(InsuranceNetworkTypeID);
 
-      if (result === 0) {
+      if (!insuranceNetworkType) {
         console.error("Tipo de red de seguros no encontrado o ya eliminado.")
         return OperationResult.failure('InsuranceNetworkTypeNotFoundOrDeleted');
-      }
+      }; 
+
+      await insuranceNetworkType.update({
+        IsActive: false,
+        UpdatedAt: new Date()
+      });
 
       console.log("Tipo de red de seguros desactivado correctamente.")
       return OperationResult.success('InsuranceNetworkTypeDeleteCompleted');
+
     } catch (error) {
-      console.error("❌ Error al eliminar el tipo de red de seguros:", error);
+      console.error("Error al eliminar el tipo de red de seguros:", error);
       return OperationResult.failure('InsuranceNetworkTypeDeleteError', error);
     }
   }

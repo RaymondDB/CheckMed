@@ -135,8 +135,8 @@ class InsuranceProvidersService {
         CustomerSupportContact,
         AcceptedRegions,
         MaxCoverageAmount,
-      CreatedAt: new Date(),
-      UpdatedAt: new Date(),
+        CreatedAt: new Date(),
+        UpdatedAt: new Date(),
       IsActive: IsActive !== undefined ? IsActive : true,
     };
 
@@ -152,6 +152,26 @@ class InsuranceProvidersService {
 
     return insuranceProviderResult;
   }
+
+
+  async getAllInsuranceProviders() {
+    try {
+      console.log("🔍 Buscando todos los proveedores de seguros.");
+      const result = await InsuranceProvidersRepository.findAll();
+
+      if (!result.success || !result.data) {
+        console.error("No se encontraron los proveedores de seguros.")
+        return OperationResult.failure('InsuranceProvidersSearchListNotFound');
+      }
+
+      console.log("Se han encontrado los proveedores de seguros.")
+      return OperationResult.success(result.data);
+    } catch (error) {
+        console.error("Error al obtener la lista de proveedores de seguros:", error);
+        return OperationResult.failure('InsuranceProvidersSearchListError', error);
+      }
+  }
+
 
   async getInsuranceProviderById(InsuranceProviderID) {
     console.log("🔍 Buscando el proveedor de seguros con ID:", InsuranceProviderID);
@@ -228,9 +248,9 @@ class InsuranceProvidersService {
       return OperationResult.failure('TooLongFields')
     }
 
-    console.log("✅ Actualizando proveedor de seguros con ID:", InsuranceProviderID, "Campos:", updatedFields);
-
     updatedFields.UpdatedAt = new Date();
+
+    console.log("✅ Actualizando proveedor de seguros con ID:", InsuranceProviderID, "Campos:", updatedFields);
 
     const updateResult = await InsuranceProvidersRepository.update(InsuranceProviderID, updatedFields);
     if (updateResult.success) {

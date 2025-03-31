@@ -27,11 +27,7 @@ class InsuranceProvider {
       this.email = new Email(newEmail);
       this.updatedAt = new Date();
     }
-  
-   deactivateInsuranceProvider() {
-      this.isActive = false;
-      this.updatedAt = new Date();
-    }
+
   }
   
   module.exports = InsuranceProvider;

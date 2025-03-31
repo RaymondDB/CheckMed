@@ -1,9 +1,10 @@
 class InsuranceNetworkTypeDTO {
-    constructor({ id, name, description, createdAt, isActive }) {
+    constructor({ id, name, description, createdAt, updatedAt, isActive }) {
       this.id = id;
       this.name = name;
       this.description = description;
       this.createdAt = createdAt;
+      this.updatedAt = updatedAt
       this.isActive = isActive;
     }
   
@@ -13,7 +14,8 @@ class InsuranceNetworkTypeDTO {
         name: insuranceNetworkTypeModel.Name,
         description: insuranceNetworkTypeModel.Description,
         createdAt: insuranceNetworkTypeModel.CreatedAt,
-        isActive: insuranceNetworkTypeModel.IsActive,
+        updatedAt: insuranceNetworkTypeModel.UpdatedAt,
+        isActive: insuranceNetworkTypeModel.IsActive
       });
     }
   }

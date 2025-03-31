@@ -3,6 +3,7 @@ const EventBus = require("../listeners/eventBus");
 const OperationResult = require("../../domain/valueObjects/OperationResult");
 const ValidationService = require("../../domain/services/validationService");
 
+
 class InsuranceNetworkTypeService {
   async createInsuranceNetworkType(insuranceNetworkTypeData) {
     console.log("INSURANCE NETWORK TYPE DATA RECIBIDO EN SERVICE:", insuranceNetworkTypeData);
@@ -16,7 +17,7 @@ class InsuranceNetworkTypeService {
       NetworkTypeID,
       Name,
       Description,
-      IsActive
+      IsActive,
     } = insuranceNetworkTypeData;
 
     console.log("Campos extraídos:");
@@ -73,6 +74,24 @@ class InsuranceNetworkTypeService {
     return insuranceNetworkTypeResult;
   }
 
+  async getAllInsuranceNetworkTypes() {
+    try {
+      console.log("🔍 Buscando todos los tipos de redes de seguros.");
+      const result = await InsuranceNetworkTypeRepository.findAll();
+
+      if (!result.success || !result.data) {
+        console.error("No se encontraron los tipos de redes de seguros.")
+        return OperationResult.failure('InsuranceNetworkTypeSearchListNotFound');
+      }
+      
+      console.log("Se han encontrado las redes de seguros.")
+      return OperationResult.success(result.data);
+    } catch (error) {
+        console.error("Error al obtener la lista de tipos de redes de seguros:", error);
+        return OperationResult.failure('InsuranceNetworkTypeSearchListError', error);
+      }
+  }
+
   async getInsuranceNetworkTypeById(NetworkTypeID) {
     console.log("🔍 Buscando tipo de red de seguros con ID:", NetworkTypeID);
     
@@ -103,9 +122,9 @@ class InsuranceNetworkTypeService {
       return OperationResult.failure('TooLongFields')
     }
 
-    console.log("✅ Actualizando tipo de red de seguros con ID:", NetworkTypeID, "Campos:", updatedFields);
-
     updatedFields.UpdatedAt = new Date();
+    
+    console.log("✅ Actualizando tipo de red de seguros con ID:", NetworkTypeID, "Campos:", updatedFields);
 
     const updateResult = await InsuranceNetworkTypeRepository.update(NetworkTypeID, updatedFields);
     if (updateResult.success) {

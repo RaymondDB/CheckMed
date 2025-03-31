@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@100&display=swap');
+
+*{
+    font-family: 'Raleway', sans-serif;
+    font-weight: 900;
+}
+
+body{
+    background-color: rgba(105, 101, 101, 0.212);
+}
+
+.Panel{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 10px 12px 5px #A4B9DD;
+    
+}
+
+.Panel h1{
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #09185C;
+  
+}
+
+.Panel form{
+    padding-left: 0 40px;
+    box-sizing: border-box;
+}
+
+form .Texto{
+    position: relative;
+    border-bottom: 1px solid #09185C;
+    margin: 30px ;
+}
+
+.Texto input{
+   width: 100%;
+   padding: 0 5px;
+   height: 40px;
+   font-size: 16px;
+   border: none;
+   background: none;
+   outline: none;
+}
+
+.Texto label{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: .5s;
+}
+
+.Texto input:focus ~ label, .Texto input:valid ~ label{
+    top: -5px;
+    color: gray;
+}
+
+.submit{
+    display: flex;
+    width: 300px;
+    height: 50px;
+    border-radius: 10px;
+    border: 0.5px solid grey;
+    margin-left: 40px;
+    margin-bottom: 10px;
+    background-color: rgba(91, 44, 221, 0.589);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+}
+
+.submit:hover{
+    background-color: #1C2C57;
+    color: white;
+}

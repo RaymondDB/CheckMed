@@ -1,12 +1,11 @@
 const InsuranceNetworkTypeDomainService = require("../../domain/services/insuranceNetworkTypeServices");
-const InsuranceNetworkTypeRepository = require("../../repositories/implementations/InsuranceNetworkTypeImplementation");
 const EventBus = require("../../domain/listeners/eventBus");
 const OperationResult = require("../../domain/valueObjects/OperationResult");
 const ValidationService = require("../../domain/services/validationServicee");
 
-class InsuranceNetworkTypeService {
-    constructor({ insuranceNetworkTypeRepository }){
-        this.insuranceNetworkTypeRepository = InsuranceNetworkTypeRepository;
+class InsuranceNetworkTypeBService {
+    constructor({insuranceNetworkTypeRepository}){
+        this.insuranceNetworkTypeRepository = insuranceNetworkTypeRepository;
       }
     
     async createInsuranceNetworkType(insuranceNetworkTypeData) {
@@ -26,7 +25,7 @@ class InsuranceNetworkTypeService {
     if(!ValidationService.isValidFieldLenght(Name, 50) ||
     !ValidationService.isValidFieldLenght(Description, 255)
       ){
-      console.error("Hay campos especificados que exceden del límite de caracteres posible.")
+      console.error("Hay campos especificados que exceden del límite de caracteres posible.") 
       return OperationResult.failure('TooLongFields')
     } 
 
@@ -37,17 +36,17 @@ class InsuranceNetworkTypeService {
       return OperationResult.failure('InsuranceNetworkTypeAlreadyExisting');
     }
 
-    const transaction = await this.insuranceNetworkTypeRepository.startTransaction();
-
     const insuranceNetworkTypeToSave = {
-    ...insuranceNetworkTypeData,
-      CreatedAt: new Date(),
-      UpdatedAt: new Date(),
-      IsActive: insuranceNetworkTypeData.IsActive !== undefined ? insuranceNetworkTypeData.IsActive : true,
+    NetworkTypeID: insuranceNetworkTypeData.NetworkTypeID,
+    Name: insuranceNetworkTypeData.Name,
+    Description: insuranceNetworkTypeData.Description,
+    CreatedAt: new Date(),
+    UpdatedAt: new Date(),
+    IsActive: insuranceNetworkTypeData.IsActive ?? true
     };
 
     console.log("Guardando tipo de red de seguros en BD:", insuranceNetworkTypeToSave);
-    const insuranceNetworkTypeResult = await this.insuranceNetworkTypeRepository.save(insuranceNetworkTypeToSave, transaction);
+    const insuranceNetworkTypeResult = await this.insuranceNetworkTypeRepository.save(insuranceNetworkTypeToSave);
 
     if (insuranceNetworkTypeResult.success) {
       console.log("Tipo de red de seguros guardada con éxito:", insuranceNetworkTypeResult.data);
@@ -90,7 +89,7 @@ class InsuranceNetworkTypeService {
     }
 
     updatedFields.UpdatedAt = new Date();
-
+    
     const updateResult = await this.insuranceNetworkTypeRepository.update(NetworkTypeID, updatedFields);
     if (updateResult.success) {
       EventBus.emit("InsuranceNetworkTypeUpdated", updateResult.data);
@@ -118,4 +117,4 @@ class InsuranceNetworkTypeService {
   }
 }
 
-module.exports = InsuranceNetworkTypeService;   
+module.exports = InsuranceNetworkTypeBService;   

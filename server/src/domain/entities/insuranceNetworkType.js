@@ -7,11 +7,7 @@ class InsuranceNetworkType {
       this.updatedAt = updatedAt || null;
       this.isActive = isActive;
     }
-  
-   deactivateInsuranceNetworkTpye() {
-      this.isActive = false;
-      this.updatedAt = new Date();
-    }
+
   }
   
   module.exports = InsuranceNetworkType;

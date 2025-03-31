@@ -77,10 +77,22 @@ class InsuranceProvidersService {
     }
 
     const insuranceProviderToSave = {
-    ...insuranceProviderData,
-      CreatedAt: new Date(),
-      UpdatedAt: new Date(),
-      IsActive: insuranceProviderData.IsActive !== undefined ? insuranceProviderData.IsActive : true,
+    Name: insuranceProviderData.Name,
+    ContactNumber: insuranceProviderData.ContactNumber,
+    Email: insuranceProviderData.Email,
+    Website: insuranceProviderData.WebSite,
+    Address: insuranceProviderData.Address,
+    City: insuranceProviderData.City,
+    State: insuranceProviderData.State,
+    ContactNumber: insuranceProviderData.ContactNumber,
+    Country: insuranceProviderData.Country,
+    ZipCode: insuranceProviderData.ZipCode,
+    LogoUrl: insuranceProviderData.LogoUrl,
+    CustomerSupportContact: insuranceProviderData.CustomerSupportContact,
+    AcceptedRegions: insuranceProviderData.AcceptedRegions,
+    CreatedAt: new Date(),
+    UpdatedAt: new Date(),
+    IsActive: insuranceProviderData.IsActive ??  true,
     };
 
     console.log("Guardando el proveedor de seguros en BD:", insuranceProviderToSave);

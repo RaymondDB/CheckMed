@@ -1,6 +1,6 @@
 class InsuranceProvidersDTO {
     constructor({ id, name, contactNumber, email, website, address, city, state, country, zipCode, coverageDetails, logoUrl, 
-        isPreferred, networkTypeId, customerSupportContact, acceptedRegions, maxCoverageAmount, createdAt, isActive }) {
+        isPreferred, networkTypeId, customerSupportContact, acceptedRegions, maxCoverageAmount, createdAt, updatedAt, isActive }) {
       this.id = id;
       this.name = name;
       this.contactNumber = contactNumber;
@@ -19,6 +19,7 @@ class InsuranceProvidersDTO {
       this.acceptedRegions = acceptedRegions;
       this.maxCoverageAmount = maxCoverageAmount;
       this.createdAt = createdAt;
+      this.updatedAt = updatedAt;
       this.isActive = isActive;
     }
   
@@ -42,7 +43,8 @@ class InsuranceProvidersDTO {
         acceptedRegions: insuranceProviderModel.AcceptedRegions,
         maxCoverageAmount: insuranceProviderModel.MaxCoverageAmount,
         createdAt: insuranceProviderModel.CreatedAt,
-        isActive: insuranceProviderModel.IsActive,
+        updatedAt: insuranceProviderModel.UpdatedAt,
+        isActive: insuranceProviderModel.IsActive
       });
     }
   }

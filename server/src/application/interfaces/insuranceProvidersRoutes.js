@@ -13,6 +13,13 @@ router.post("/", async (req, res) => {
     if (!result.success) return res.status(404).json(result);
     res.json(result);
   });
+
+  router.get("/", async (req, res) => {
+    const result = await InsuranceProvidersService.getAllInsuranceProviders();
+  
+    if (!result.success) return res.status(404).json(result);
+    res.json(result);
+  });
   
   router.put("/:id", async (req, res) => {
     const result = await InsuranceProvidersService.updateInsuranceProvider(req.params.id, req.body);
