@@ -3,7 +3,7 @@ const { sequelize } = require("../../infrastructure/db/dbconfig");
 const User = require("../../infrastructure/Models/UsersModel")
 const moment = require("moment")
 
-const now = moment().format("YYYY-MM-DD HH:mm:ss");
+const today = new Date().toISOString().split("T")[0];
 
 class UsersImplementation {
   async findById(UserID) {
@@ -30,6 +30,19 @@ class UsersImplementation {
     }
   }
 
+  async getAllUsers() {
+    try {
+      const users = await User.findAll();
+
+      if (!users) return OperationResult.failure("Usuario no encontrado.");
+
+      return OperationResult.success(users);
+    } catch (error) {
+      return OperationResult.failure("Error al obtener todos los usuarios.", error);
+    }
+  }
+
+
   async save(userData, transaction) {
     try {
       const newUser = await User.create({
@@ -38,8 +51,8 @@ class UsersImplementation {
         Email: userData.Email,
         Password: userData.Password,
         RoleID: userData.RoleID,
-        CreatedAt: now,
-        UpdatedAt: now,
+        CreatedAt: today,
+        UpdatedAt: today,
         IsActive: userData.IsActive ?? true,
       }, { transaction });
 
@@ -78,6 +91,22 @@ class UsersImplementation {
       return OperationResult.success("Usuario desactivado correctamente.");
     } catch (error) {
       return OperationResult.failure("Error al eliminar el usuario.", error);
+    }
+  }
+
+  // Metodo de logueo
+
+  async findByCredentials(email, password) {
+    try {
+      const user = await User.findOne({
+        where: { Email: email, Password: password, IsActive: true },
+        attributes: ["UserID", "Email", "RoleID", "FirstName", "LastName"]
+      });
+  
+      if (!user) return OperationResult.failure("Credenciales inválidas.");
+      return OperationResult.success(user);
+    } catch (error) {
+      return OperationResult.failure("Error al buscar el usuario.", error);
     }
   }
 

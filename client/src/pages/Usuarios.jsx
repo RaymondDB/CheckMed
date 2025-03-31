@@ -18,20 +18,6 @@ import Axios from "axios";
 import Sidebar from "../components/Sidebar";
 
 export const Usuarios = () => {
-  /*Comboboxes Usuarios*/
-  const [rolCombo, setrolCombo] = useState([]);
-  const [empleadoCombo, setempleadoCombo] = useState([]);
-
-  /*INFO COMBOBOXES*/
-  Axios.get("http://localhost:3000/roles/mostrarRoles").then((response) => {
-    setrolCombo(response.data);
-  });
-
-  Axios.get("http://localhost:3000/empleados/mostrarEmpleados").then(
-    (response) => {
-      setempleadoCombo(response.data);
-    }
-  );
 
   /*Rellenar y Buscar Tabla*/
   const [usuarioArray, setUsuarioArray] = useState([]);
@@ -39,10 +25,10 @@ export const Usuarios = () => {
   const [Busqueda, setBusqueda] = useState("");
 
   const mostrar = () => {
-    Axios.get("http://localhost:3000/usuarios/usuarioMostrar").then(
+    Axios.get("http://localhost:3000/users").then(
       (response) => {
-        setUsuarioTemp(response.data);
-        setUsuarioArray(response.data);
+        setUsuarioTemp(response.data.data);
+        setUsuarioArray(response.data.data);
       }
     );
   };
@@ -54,20 +40,29 @@ export const Usuarios = () => {
   const filtrarInfo = (busqueda) => {
     var resultadobusqueda = usuarioArray.filter((elemento) => {
       if (
-        elemento.ID.toString().toLowerCase().includes(busqueda.toLowerCase()) ||
-        elemento.Username.toString()
+        elemento.UserID.toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+        elemento.FirstName.toString()
           .toLowerCase()
           .includes(busqueda.toLowerCase()) ||
-        elemento.Contraseña.toString()
+        elemento.LastName.toString()
           .toLowerCase()
           .includes(busqueda.toLowerCase()) ||
-        elemento.C_Rol.toString()
+        elemento.Email.toString()
           .toLowerCase()
           .includes(busqueda.toLowerCase()) ||
-        elemento.C_Empleado.toString()
+        elemento.Password.toString()
           .toLowerCase()
           .includes(busqueda.toLowerCase()) ||
-        elemento.Observaciones.toString()
+        elemento.RoleID.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()) ||
+          elemento.CreatedAt.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()) ||
+          elemento.UpdatedAt.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()) ||
+          elemento.IsActive.toString()
           .toLowerCase()
           .includes(busqueda.toLowerCase())
       ) {
@@ -85,24 +80,24 @@ export const Usuarios = () => {
 
   const [modalSave, setModalSave] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
-  const [modalDelete, setModalDelete] = useState("");
+  const [modalDelete, setModalDelete] = useState(false);
   const toggleSave = () => setModalSave(!modalSave);
   const toggleUpdate = () => setModalUpdate(!modalUpdate);
   const toggleDelete = () => setModalDelete(!modalDelete);
 
-  const [usernameSave, setUsernameSave] = useState("");
-  const [contraseñaSave, setContraseñaSave] = useState("");
-  const [c_rolSave, setC_rolSave] = useState("");
-  const [c_empleadoSave, setC_empleadoSave] = useState("");
-  const [observacionesSave, setObservacionesSave] = useState("");
+  const [save,setSave] = useState({
+    first: "", last: "", email: "", pass:"", role:1
+  });
 
+  
   const saveUsuario = () => {
-    Axios.post("http://localhost:3000/usuarios/guardarUsuario", {
-      Username: usernameSave,
-      Contraseña: contraseñaSave,
-      C_Rol: c_rolSave,
-      C_Empleado: c_empleadoSave,
-      Observaciones: observacionesSave,
+    Axios.post("http://localhost:3000/users", {
+      FirstName: save.first,
+      LastName: save.last,
+      Password: save.pass,
+      Email: save.email,
+      RoleID: save.role,
+      IsActive: true
     }).then(() => {
       toggleSave();
       console.log("Usuario agregado");
@@ -111,27 +106,25 @@ export const Usuarios = () => {
 
   /*ACTUALIZAR USUARIO*/
 
-  const [actualizar, setactualizar] = useState([]);
-  const [usernameUpdate, setUsernameUpdate] = useState("");
-  const [ContraseñaUpdate, setContraseñaUpdate] = useState("");
-  const [c_rolUpdate, setc_rolUpdate] = useState("");
-  const [c_empleadoUpdate, setc_empleadoUpdate] = useState("");
+  const [actualizar, setactualizar] = useState({});
+  const [edit,setEdit] = useState({
+    first: "", last: "", email: "", pass:"", role:""
+  });
 
   const Actualizar = (id) => {
-    Axios.post("http://localhost:3000/usuarios/UsuarioAll", {
-      ID: id,
-    }).then((response) => {
-      setactualizar(response.data);
+    Axios.get(`http://localhost:3000/users/${id}`).then((response) => {
+      setactualizar(response.data.data);
+      toggleUpdate();
     });
   };
 
   const updateUsuario = (id) => {
-    Axios.post("http://localhost:3000/usuarios/Usuarioact", {
-      ID: id,
-      Username: usernameUpdate,
-      Contraseña: ContraseñaUpdate,
-      C_Rol: c_rolUpdate,
-      C_Empleado: c_empleadoUpdate,
+    Axios.put(`http://localhost:3000/users/${id}`, {
+      FirstName: edit.first,
+      LastName: edit.last,
+      Password: edit.pass,
+      Email: edit.email,
+      RoleID: edit.role,
     }).then(() => {
       toggleUpdate();
     });
@@ -142,17 +135,14 @@ export const Usuarios = () => {
   const [nombreDelete, setNombreDelete] = useState("");
 
   const Eliminar = (id) => {
-    Axios.post("http://localhost:3000/usuarios/UsuarioAll", {
-      ID: id,
-    }).then((response) => {
-      setEliminar(response.data);
+    Axios.get(`http://localhost:3000/users/${id}`).then((response) => {
+      setEliminar(response.data.data);
+      toggleDelete();
     });
   };
 
   const deleteUsuario = (id) => {
-    Axios.post("http://localhost:3000/usuarios/eliminar", {
-      ID: id,
-    }).then(() => {
+    Axios.delete(`http://localhost:3000/users/${id}`).then(() => {
       toggleDelete();
     });
   };
@@ -191,36 +181,37 @@ export const Usuarios = () => {
                 <thead>
                   <tr>
                     <th scope="col">ID</th>
-                    <th scope="col">Usuario</th>
-                    <th scope="col">Contraseña</th>
-                    <th scope="col">Rol</th>
-                    <th scope="col">ID Empleado</th>
-                    <th scope="col">Observaciones</th>
-                    <th scope="col">Acciones</th>
+                    <th scope="col">FirstName</th>
+                    <th scope="col">LastName</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Password</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Created At</th>
+                    <th scope="col">Updated At</th>
+                    <th scope="col">IsActive</th>
+                    <th scope="col">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="table-group-divider">
                   {usuarioTemp.map((val, key) => {
                     return (
                       <tr>
-                        <td>{val.ID}</td>
-                        <td>{val.Username}</td>
-                        <td>{val.Contraseña}</td>
-                        <td>{val.C_Rol}</td>
-                        <td>{val.C_Empleado}</td>
-                        <td>{val.Observaciones}</td>
+                        <td>{val.UserID}</td>
+                        <td>{val.FirstName}</td>
+                        <td>{val.LastName}</td>
+                        <td>{val.Email}</td>
+                        <td>{val.Password}</td>
+                        <td>{val.RoleID}</td>
+                        <td>{val.CreatedAt}</td>
+                        <td>{val.UpdatedAt}</td>
+                        <td>{val.IsActive ? "Yes" : "No"}</td>
                         <td>
-                          {""}
                           <Button
                             color="primary"
                             className="space"
                             onClick={() => {
-                              Actualizar(val.ID);
-                              setUsernameUpdate(val.Username);
-                              setContraseñaUpdate(val.Contraseña);
-                              setc_rolUpdate(val.C_Rol);
-                              setc_empleadoUpdate(val.C_Empleado);
-                              toggleUpdate();
+                              setEdit({first: val.FirstName, last: val.LastName, email: val.Email, pass: val.Password, role: val.RoleID})
+                              Actualizar(val.UserID);
                             }}
                           >
                             Editar
@@ -229,12 +220,12 @@ export const Usuarios = () => {
                             color="danger"
                             className="space"
                             onClick={() => {
-                              Eliminar(val.ID);
-                              setNombreDelete(val.Username);
-                              toggleDelete();
+                              setNombreDelete(val.FirstName + " " + val.LastName);
+                              Eliminar(val.UserID);
+                              
                             }}
                           >
-                            ELIMINAR
+                            Desactivar
                           </Button>
                         </td>
                       </tr>
@@ -249,81 +240,54 @@ export const Usuarios = () => {
             <ModalHeader toggle={toggleSave}>AGREGAR USUARIO</ModalHeader>
             <ModalBody>
               <FormGroup>
-                <Label for="Username">Username</Label>
+                <Label for="FirstName">First Name</Label>
                 <Input
-                  id="Username"
-                  placeholder="Username"
+                  id="FirstName"
+                  placeholder="FirstName"
                   onChange={(event) => {
-                    setUsernameSave(event.target.value);
+                    setSave({...save, first: event.target.value});
                   }}
                 ></Input>
               </FormGroup>
-
               <FormGroup>
-                <Label for="Contraseña">Contraseña</Label>
+                <Label for="LastName">Last Name</Label>
                 <Input
-                  id="Contraseña"
-                  placeholder="Contraseña"
+                  id="LastName"
+                  placeholder="LastName"
                   onChange={(event) => {
-                    setContraseñaSave(event.target.value);
+                    setSave({...save, last: event.target.value});
                   }}
                 ></Input>
               </FormGroup>
-
-              <Row>
-                <Col md={12}>
-                  <FormGroup>
-                    <Label for="C_Rol">Rol</Label>
-                    <Input
-                      type="select"
-                      id="C_Rol"
-                      onChange={(event) => {
-                        setC_rolSave(event.target.value);
-                      }}
-                    >
-                      <option disabled selected>
-                        Rol
-                      </option>
-                      {rolCombo.map((val, key) => {
-                        return <option value={val.ID}>{val.Nombre}</option>;
-                      })}
-                    </Input>
-                  </FormGroup>
-                </Col>
-              </Row>
-
-              <Row>
-                <Col md={12}>
-                  <FormGroup>
-                    <Label for="C_Empleado">Empleado</Label>
-                    <Input
-                      type="select"
-                      id="C_Empleado"
-                      onChange={(event) => {
-                        setC_empleadoSave(event.target.value);
-                      }}
-                    >
-                      <option disabled selected>
-                        Empleado
-                      </option>
-                      {empleadoCombo.map((val, key) => {
-                        return <option value={val.ID}>{val.Nombre}</option>;
-                      })}
-                    </Input>
-                  </FormGroup>
-                </Col>
-              </Row>
-
               <FormGroup>
-                <Label for="Observaciones">Observaciones</Label>
+                <Label for="Email">Email</Label>
                 <Input
-                  id="Observaciones"
-                  placeholder="Observaciones"
+                  id="Email"
+                  placeholder="Email"
                   onChange={(event) => {
-                    setObservacionesSave(event.target.value);
+                    setSave({...save, email: event.target.value});
                   }}
                 ></Input>
               </FormGroup>
+              <FormGroup>
+                <Label for="Pass">Password</Label>
+                <Input
+                  id="pass"
+                  placeholder="pass"
+                  onChange={(event) => {
+                    setSave({...save, pass: event.target.value});
+                  }}
+                ></Input>
+              </FormGroup>
+              <FormGroup>
+                <Label for="exampleSelect">Role</Label>
+                  <Input type="select" name="select" id="exampleSelect" onChange={(event) => {setSave({...save, role: event.target.value});}}>
+                  <option>1</option>
+                  <option>2</option></Input>
+                
+              </FormGroup>
+
+              
             </ModalBody>
             <ModalFooter>
               <Button
@@ -342,92 +306,64 @@ export const Usuarios = () => {
           </Modal>
 
           <Modal isOpen={modalUpdate} toggle={toggleUpdate}>
-            {actualizar.map((val, key) => {
-              return (
                 <>
                   <ModalHeader toggle={toggleUpdate}>
                     ACTUALIZAR USUARIO
                   </ModalHeader>
                   <ModalBody>
-                    <FormGroup>
-                      <Label for="Username">Nombre</Label>
-                      <Input
-                        id="Username"
-                        placeholder="Username"
-                        defaultValue={val.Username}
-                        onChange={(event) => {
-                          setUsernameUpdate(event.target.value);
-                        }}
-                      ></Input>
-                    </FormGroup>
-
-                    <FormGroup>
-                      <Label for="Contraseña">Contraseña</Label>
-                      <Input
-                        id="Contraseña"
-                        placeholder="Contraseña"
-                        defaultValue={val.Contraseña}
-                        onChange={(event) => {
-                          setContraseñaUpdate(event.target.value);
-                        }}
-                      ></Input>
-                    </FormGroup>
-
-                    <Row>
-                      <Col md={12}>
-                        <FormGroup>
-                          <Label for="C_Rol">C_Rol</Label>
-                          <Input
-                            type="select"
-                            id="C_Rol"
-                            defaultValue={val.C_Rol}
-                            onChange={(event) => {
-                              setc_rolUpdate(event.target.value);
-                            }}
-                          >
-                            <option disabled selected>
-                              C_Rol
-                            </option>
-                            {rolCombo.map((val, key) => {
-                              return (
-                                <option value={val.ID}>{val.Nombre}</option>
-                              );
-                            })}
-                          </Input>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-
-                    <Row>
-                      <Col md={12}>
-                        <FormGroup>
-                          <Label for="C_Empleado">C_Empleado</Label>
-                          <Input
-                            type="select"
-                            id="C_Empleado"
-                            defaultValue={val.C_Empleado}
-                            onChange={(event) => {
-                              setc_empleadoUpdate(event.target.value);
-                            }}
-                          >
-                            <option disabled selected>
-                              C_Empleado
-                            </option>
-                            {empleadoCombo.map((val, key) => {
-                              return (
-                                <option value={val.ID}>{val.Nombre}</option>
-                              );
-                            })}
-                          </Input>
-                        </FormGroup>
-                      </Col>
-                    </Row>
+                  <FormGroup>
+                <Label for="FirstName">First Name</Label>
+                <Input
+                  id="FirstName"
+                  defaultValue={actualizar.FirstName}
+                  onChange={(event) => {
+                    setEdit({...edit, first: event.target.value});
+                  }}
+                ></Input>
+              </FormGroup>
+              <FormGroup>
+                <Label for="LastName">Last Name</Label>
+                <Input
+                  id="LastName"
+                  defaultValue={actualizar.LastName}
+                  onChange={(event) => {
+                    setEdit({...edit, last: event.target.value});
+                  }}
+                ></Input>
+              </FormGroup>
+              <FormGroup>
+                <Label for="Email">Email</Label>
+                <Input
+                  id="Email"
+                  defaultValue={actualizar.Email}
+                  onChange={(event) => {
+                    setEdit({...edit, email: event.target.value});
+                  }}
+                ></Input>
+              </FormGroup>
+              <FormGroup>
+                <Label for="Pass">Password</Label>
+                <Input
+                  id="pass"
+                  defaultValue={actualizar.Password}
+                  onChange={(event) => {
+                    setEdit({...edit, pass: event.target.value});
+                  }}
+                ></Input>
+              </FormGroup>
+              <FormGroup>
+                <Label for="exampleSelect">Role</Label>
+                  <Input type="select" name="select" defaultValue={actualizar.RoleID} id="exampleSelect" onChange={(event) => {setEdit({...edit, role: event.target.value})}}>
+                  <option>1</option>
+                  <option>2</option>
+                  </Input>
+              </FormGroup>
                   </ModalBody>
                   <ModalFooter>
                     <Button
                       color="primary"
                       onClick={() => {
-                        updateUsuario(val.ID);
+                        updateUsuario(actualizar.UserID);
                         uploadpage();
                       }}
                     >
@@ -438,14 +374,10 @@ export const Usuarios = () => {
                     </Button>
                   </ModalFooter>
                 </>
-              );
-            })}
           </Modal>
 
           <Modal isOpen={modalDelete} toggle={toggleDelete}>
-            {eliminar.map((val, key) => {
-              return (
-                <>
+            
                   <ModalHeader toggle={toggleDelete}>
                     ELIMINAR USUARIO
                   </ModalHeader>
@@ -459,7 +391,7 @@ export const Usuarios = () => {
                       <Input
                         id="Username"
                         placeholder="Username"
-                        defaultValue={val.Username}
+                        defaultValue={eliminar.FirstName + " " + eliminar.LastName} 
                         onChange={(event) => {
                           setNombreDelete(event.target.value);
                         }}
@@ -472,10 +404,9 @@ export const Usuarios = () => {
                       color="primary"
                       className="space"
                       onClick={() => {
-                        deleteUsuario(val.ID);
+                        deleteUsuario(eliminar.UserID);
                         uploadpage();
                       }}
-                      disabled
                     >
                       ELIMINAR
                     </Button>
@@ -487,9 +418,7 @@ export const Usuarios = () => {
                       Cancel
                     </Button>
                   </ModalFooter>
-                </>
-              );
-            })}
+         
           </Modal>
 
           <Outlet />

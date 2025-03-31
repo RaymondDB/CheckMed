@@ -1,17 +1,14 @@
 const OperationResult = require("../../helpers/OperationResult");
 const { sequelize } = require("../../infrastructure/db/dbconfig");
 const Doctor = require("../../infrastructure/models/UsersDoctorModel");
-const moment = require("moment")
 
-const now = moment().format("YYYY-MM-DD HH:mm:ss");
+const today = new Date().toISOString().split("T")[0];
 
 class DoctorsImplementation {
   async findById(DoctorID) {
     try {
       const doctor = await Doctor.findByPk(DoctorID);
-
       if (!doctor) return OperationResult.failure("Doctor no encontrado.");
-
       return OperationResult.success(doctor);
     } catch (error) {
       return OperationResult.failure("Error en la búsqueda del doctor.", error);
@@ -30,7 +27,7 @@ class DoctorsImplementation {
     }
   }
 
-  async findAll() {
+  async getAllDoctors() {
     try {
       const doctors = await Doctor.findAll();
 
@@ -51,10 +48,10 @@ class DoctorsImplementation {
         Bio: doctorData.Bio,
         ConsultationFee: doctorData.ConsultationFee,
         ClinicAddress: doctorData.ClinicAddress,
-        AvailabilityModelId: doctorData.AvailabilityModelId,
+        AvailabilityModeId: doctorData.AvailabilityModeId,
         LicenseExpirationDate: doctorData.LicenseExpirationDate,
-        CreatedAt: now,
-        UpdatedAt: now,
+        CreatedAt: today,
+        UpdatedAt: today,
         IsActive: doctorData.IsActive ?? true,
       }, { transaction });
 

@@ -1,5 +1,5 @@
 class Doctor {
-  constructor(doctorId, specialtyId, licenseNumber, phoneNumber, yearsOfExperience, education, bio, consultationFee, clinicAddress, availabilityModelId, licenseExpirationDate, createdAt, updatedAt, isActive) {
+  constructor(doctorId, specialtyId, licenseNumber, phoneNumber, yearsOfExperience, education, bio, consultationFee, clinicAddress, AvailabilityModeId, licenseExpirationDate, createdAt, updatedAt, isActive) {
     this.doctorId = doctorId;
     this.specialtyId = specialtyId;
     this.licenseNumber = licenseNumber;
@@ -9,7 +9,7 @@ class Doctor {
     this.bio = bio;
     this.consultationFee = consultationFee;
     this.clinicAddress = clinicAddress;
-    this.availabilityModelId = availabilityModelId;
+    this.AvailabilityModeId = AvailabilityModeId;
     this.licenseExpirationDate = licenseExpirationDate;
     this.createdAt = createdAt || new Date();
     this.updatedAt = updatedAt || null;

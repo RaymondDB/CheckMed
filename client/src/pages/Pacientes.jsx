@@ -1,3 +1,4 @@
+// Patients.jsx
 import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import "./css/Pacientes.css";
@@ -17,30 +18,16 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 import Axios from "axios";
 
-export const Empleados = () => {
-  /*COMBOBOXES*/
-
-  const [sucursalcombo, setSucursalCombo] = useState([]);
-
-  /*INFO COMBOBOXES*/
-  Axios.get("http://localhost:3000/sucursales/mostrarSucursal").then(
-    (response) => {
-      setSucursalCombo(response.data);
-    }
-  );
-
-  /* Rellenar y buscar */
-  const [empleadoArray, setEmpleadoArray] = useState([]);
-  const [empleadoTemp, setEmpleadoTemp] = useState([]);
-  const [Busqueda, setBusqueda] = useState("");
+export const Patients = () => {
+  const [patientArray, setPatientArray] = useState([]);
+  const [patientTemp, setPatientTemp] = useState([]);
+  const [busqueda, setBusqueda] = useState("");
 
   const mostrar = () => {
-    Axios.get("http://localhost:3000/empleados/mostrarEmpleados").then(
-      (response) => {
-        setEmpleadoTemp(response.data);
-        setEmpleadoArray(response.data);
-      }
-    );
+    Axios.get("http://localhost:3000/patients").then((response) => {
+      setPatientArray(response.data.data);
+      setPatientTemp(response.data.data);
+    });
   };
 
   useEffect(() => {
@@ -48,43 +35,20 @@ export const Empleados = () => {
   }, []);
 
   const filtrarInfo = (busqueda) => {
-    var resultadobusqueda = empleadoArray.filter((elemento) => {
-      if (
-        elemento.ID.toString().toLowerCase().includes(busqueda.toLowerCase()) ||
-        elemento.Cedula.toString()
-          .toLowerCase()
-          .includes(busqueda.toLowerCase()) ||
-        elemento.Nombre.toString()
-          .toLowerCase()
-          .includes(busqueda.toLowerCase()) ||
-        elemento.Sexo.toString()
-          .toLowerCase()
-          .includes(busqueda.toLowerCase()) ||
-        elemento.Direccion.toString()
-          .toLowerCase()
-          .includes(busqueda.toLowerCase()) ||
-        elemento.Telefono.toString()
-          .toLowerCase()
-          .includes(busqueda.toLowerCase()) ||
-        elemento.F_Nacimiento.toString()
-          .toLowerCase()
-          .includes(busqueda.toLowerCase()) ||
-        elemento.C_Sucursal.toString()
-          .toLowerCase()
-          .includes(busqueda.toLowerCase())
-      ) {
-        return elemento;
-      }
-    });
-    setEmpleadoTemp(resultadobusqueda);
+    const resultado = patientArray.filter((item) =>
+      Object.values(item).some((val) =>
+        val?.toString().toLowerCase().includes(busqueda.toLowerCase())
+      )
+    );
+    setPatientTemp(resultado);
   };
-  const handlechange = (e) => {
+
+  const handleChange = (e) => {
     setBusqueda(e.target.value);
     filtrarInfo(e.target.value);
   };
 
-  /*INSERTAR EMPLEADO*/
-
+  // Estados y modales
   const [modalSave, setModalSave] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
@@ -92,448 +56,244 @@ export const Empleados = () => {
   const toggleUpdate = () => setModalUpdate(!modalUpdate);
   const toggleDelete = () => setModalDelete(!modalDelete);
 
-  const [cedulaSave, setCedulaSave] = useState("");
-  const [nombreSave, setNombreSave] = useState("");
-  const [sexoSave, setSexoSave] = useState("");
-  const [direccionSave, setDireccionSave] = useState("");
-  const [telefonoSave, setTelefonoSave] = useState("");
-  const [c_sucursalSave, setC_sucursalSave] = useState("");
-  const [f_nacimientoSave, setF_naciminetoSave] = useState("");
+  const [save, setSave] = useState({
+    date: "",
+    gender: "",
+    phone: "",
+    address: "",
+    ecName: "",
+    ecPhone: "",
+    blood: "",
+    allergies: "",
+    insurance: "",
+    active: true,
+  });
 
-  const saveEmpleado = () => {
-    Axios.post("http://localhost:3000/empleados/guardarEmpleados", {
-      Cedula: cedulaSave,
-      Nombre: nombreSave,
-      Sexo: sexoSave,
-      Direccion: direccionSave,
-      Telefono: telefonoSave,
-      F_Nacimiento: f_nacimientoSave,
-      C_Sucursal: c_sucursalSave,
+  const savePatient = () => {
+    Axios.post("http://localhost:3000/patients", {
+      DateOfBirth: save.date,
+      Gender: save.gender,
+      PhoneNumber: save.phone,
+      Address: save.address,
+      EmergencyContactName: save.ecName,
+      EmergencyContactPhone: save.ecPhone,
+      BloodType: save.blood,
+      Allergies: save.allergies,
+      InsuranceProviderID: save.insurance,
+      IsActive: save.active,
     }).then(() => {
       toggleSave();
-      console.log("Empleado agregado");
+      mostrar();
     });
   };
 
-  /*ACTUALIZAR EMPLEADO*/
+  const [edit, setEdit] = useState({});
+  const [selectedId, setSelectedId] = useState(null);
 
-  const [actualizar, setactualizar] = useState([]);
-  const [cedulaUpdate, setCedulaUpdate] = useState("");
-  const [nombreUpdate, setNombreUpdate] = useState("");
-  const [sexoUpdate, setSexoUpdate] = useState("");
-  const [direccionUpdate, setDireccionUpdate] = useState("");
-  const [telefonoUpdate, setTelefonoUpdate] = useState("");
-  const [c_sucursalUpdate, setC_sucursalUpdate] = useState("");
-
-  const Actualizar = (id) => {
-    Axios.post("http://localhost:3000/empleados/EmpleadosAll", {
-      ID: id,
-    }).then((response) => {
-      setactualizar(response.data);
-    });
-  };
-
-  const updateEmpleado = (id) => {
-    Axios.post("http://localhost:3000/empleados/empleadoAct", {
-      ID: id,
-      Cedula: cedulaUpdate,
-      Nombre: nombreUpdate,
-      Sexo: sexoUpdate,
-      Direccion: direccionUpdate,
-      Telefono: telefonoUpdate,
-      C_Sucursal: c_sucursalUpdate,
-    }).then(() => {
+  const cargarEditar = (id) => {
+    setSelectedId(id);
+    Axios.get(`http://localhost:3000/patients/${id}`).then((res) => {
+      const val = res.data;
+      setEdit({
+        date: val.DateOfBirth,
+        gender: val.Gender,
+        phone: val.PhoneNumber,
+        address: val.Address,
+        ecName: val.EmergencyContactName,
+        ecPhone: val.EmergencyContactPhone,
+        blood: val.BloodType,
+        allergies: val.Allergies,
+        insurance: val.InsuranceProviderID,
+        active: val.IsActive,
+      });
       toggleUpdate();
     });
   };
 
-  /*DELETE*/
-  const [eliminar, setEliminar] = useState([]);
-  const [nombreDelete, setNombreDelete] = useState("");
-
-  const Eliminar = (id) => {
-    Axios.post("http://localhost:3000/empleados/EmpleadosAll", {
-      ID: id,
-    }).then((response) => {
-      setEliminar(response.data);
+  const updatePatient = () => {
+    Axios.put(`http://localhost:3000/patients/${selectedId}`, {
+      DateOfBirth: edit.date,
+      Gender: edit.gender,
+      PhoneNumber: edit.phone,
+      Address: edit.address,
+      EmergencyContactName: edit.ecName,
+      EmergencyContactPhone: edit.ecPhone,
+      BloodType: edit.blood,
+      Allergies: edit.allergies,
+      InsuranceProviderID: edit.insurance,
+      IsActive: edit.active,
+    }).then(() => {
+      toggleUpdate();
+      mostrar();
     });
   };
 
-  const deleteEmpleado = (id) => {
-    Axios.post("http://localhost:3000/empleados/eliminar", {
-      ID: id,
-    }).then(() => {
+  const [eliminar, setEliminar] = useState({});
+  const cargarEliminar = (id) => {
+    setSelectedId(id);
+    Axios.get(`http://localhost:3000/patients/${id}`).then((res) => {
+      setEliminar(res.data);
       toggleDelete();
     });
   };
 
-  function uploadpage() {
-    window.location.reload(false);
-  }
+  const deletePatient = () => {
+    Axios.delete(`http://localhost:3000/patients/${selectedId}`).then(() => {
+      toggleDelete();
+      mostrar();
+    });
+  };
 
   return (
-    <>
-      <div className="app">
-        <Sidebar />
-        <div className="contenido">
-          <div className="cont-1">
-            <div className="title_table">
-              <i className="bx bx-group"></i>
-              <h1>EMPLEADOS</h1>
-            </div>
+    <div className="app">
+      <Sidebar />
+      <div className="contenido">
+        <div className="cont-1">
+          <div className="title_table">
+            <i className="bx bx-group"></i>
+            <h1>Pacientes</h1>
           </div>
-          <div className="cont-2">
-            <div className="title_header">
-              <div className="input_search">
-                <input
-                  type="search"
-                  onChange={handlechange}
-                  placeholder="Buscar..."
-                />
-                <i className="bx bx-search-alt-2 search"></i>
-              </div>
-              <Button onClick={toggleSave}>AGREGAR EMPLEADO </Button>
-            </div>
-          </div>
-          <div className="cont-3">
-            <div className="table-responsive">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Cedula</th>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Sexo</th>
-                    <th scope="col">Direccion</th>
-                    <th scope="col">Telefono</th>
-                    <th scope="col">F. Nacimiento</th>
-                    <th scope="col">C. Sucursal</th>
-                    <th scope="col">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody className="table-group-divider">
-                  {empleadoTemp.map((val, key) => {
-                    return (
-                      <tr>
-                        <td>{val.ID}</td>
-                        <td>{val.Cedula}</td>
-                        <td>{val.Nombre}</td>
-                        <td>{val.Sexo}</td>
-                        <td>{val.Direccion}</td>
-                        <td>{val.Telefono}</td>
-                        <td>{val.F_Nacimiento.substring(0, 10)}</td>
-                        <td>{val.C_Sucursal}</td>
-                        <td>
-                          {""}
-                          <Button
-                            color="primary"
-                            className="space"
-                            onClick={() => {
-                              Actualizar(val.ID);
-                              setCedulaUpdate(val.Cedula);
-                              setNombreUpdate(val.Nombre);
-                              setSexoUpdate(val.Sexo);
-                              setDireccionUpdate(val.Direccion);
-                              setTelefonoUpdate(val.Telefono);
-                              setC_sucursalUpdate(val.C_Sucursal);
-                              toggleUpdate();
-                            }}
-                          >
-                            Editar
-                          </Button>
-                          <Button
-                            color="danger"
-                            className="space"
-                            onClick={() => {
-                              Eliminar(val.ID);
-                              setNombreDelete(val.Nombre);
-                              toggleDelete();
-                            }}
-                          >
-                            ELIMINAR
-                          </Button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <Modal isOpen={modalSave} toggle={modalSave}>
-            <ModalHeader toggle={toggleSave}>AGREGAR EMPLEADO</ModalHeader>
-            <ModalBody>
-              <FormGroup>
-                <Label for="Cedula">Cedula</Label>
-                <Input
-                  id="Cedula"
-                  placeholder="Cedula"
-                  onChange={(event) => {
-                    setCedulaSave(event.target.value);
-                  }}
-                ></Input>
-              </FormGroup>
-
-              <FormGroup>
-                <Label for="Nombre">Nombre</Label>
-                <Input
-                  id="Nombre"
-                  placeholder="Nombre"
-                  onChange={(event) => {
-                    setNombreSave(event.target.value);
-                  }}
-                ></Input>
-              </FormGroup>
-
-              <FormGroup>
-                <Label for="Sexo">Sexo</Label>
-                <Input
-                  id="Sexo"
-                  placeholder="Sexo"
-                  onChange={(event) => {
-                    setSexoSave(event.target.value);
-                  }}
-                ></Input>
-              </FormGroup>
-
-              <FormGroup>
-                <Label for="Direccion">Direccion</Label>
-                <Input
-                  id="Direccion"
-                  placeholder="Direccion"
-                  onChange={(event) => {
-                    setDireccionSave(event.target.value);
-                  }}
-                ></Input>
-              </FormGroup>
-
-              <FormGroup>
-                <Label for="Telefono">Telefono</Label>
-                <Input
-                  id="Telefono"
-                  placeholder="Telefono"
-                  onChange={(event) => {
-                    setTelefonoSave(event.target.value);
-                  }}
-                ></Input>
-              </FormGroup>
-
-              <FormGroup>
-                <Label for="F_Nacimiento">Fecha de Nacimiento</Label>
-                <Input
-                  id="F_Nacimiento"
-                  type="date"
-                  placeholder="F_Nacimiento"
-                  onChange={(event) => {
-                    setF_naciminetoSave(event.target.value);
-                  }}
-                ></Input>
-              </FormGroup>
-
-              <Row>
-                <Col md={12}>
-                  <FormGroup>
-                    <Label for="C_Sucursal">Codigo Sucursal</Label>
-                    <Input
-                      type="select"
-                      id="C_Sucursal"
-                      onChange={(event) => {
-                        setC_sucursalSave(event.target.value);
-                      }}
-                    >
-                      <option disabled selected>
-                        C_Sucursal
-                      </option>
-                      {sucursalcombo.map((val, key) => {
-                        return (
-                          <option value={val.ID}>{val.Nombre}</option>
-                        )
-                      })}
-                    </Input>
-                  </FormGroup>
-                </Col>
-              </Row>
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                color="primary"
-                onClick={() => {
-                  saveEmpleado();
-                  uploadpage();
-                }}
-              >
-                GUARDAR
-              </Button>{" "}
-              <Button color="danger" onClick={toggleSave}>
-                Cancel
-              </Button>
-            </ModalFooter>
-          </Modal>
-
-          <Modal isOpen={modalUpdate} toggle={modalUpdate}>
-            {actualizar.map((val, key) => {
-              return (
-                <>
-                  <ModalHeader toggle={toggleUpdate}>
-                    ACTUALIZAR EMPLEADO
-                  </ModalHeader>
-                  <ModalBody>
-                    <FormGroup>
-                      <Label for="Cedula">Cedula</Label>
-                      <Input
-                        id="Cedula"
-                        placeholder="Cedula"
-                        defaultValue={val.Cedula}
-                        onChange={(event) => {
-                          setCedulaUpdate(event.target.value);
-                        }}
-                      ></Input>
-                    </FormGroup>
-
-                    <FormGroup>
-                      <Label for="Nombre">Nombre</Label>
-                      <Input
-                        id="Nombre"
-                        placeholder="Nombre"
-                        defaultValue={val.Nombre}
-                        onChange={(event) => {
-                          setNombreUpdate(event.target.value);
-                        }}
-                      ></Input>
-                    </FormGroup>
-
-                    <FormGroup>
-                      <Label for="Sexo">Sexo</Label>
-                      <Input
-                        id="Sexo"
-                        placeholder="Sexo"
-                        defaultValue={val.Sexo}
-                        onChange={(event) => {
-                          setSexoUpdate(event.target.value);
-                        }}
-                      ></Input>
-                    </FormGroup>
-
-                    <FormGroup>
-                      <Label for="Direccion">Direccion</Label>
-                      <Input
-                        id="Direccion"
-                        placeholder="Direccion"
-                        defaultValue={val.Direccion}
-                        onChange={(event) => {
-                          setDireccionUpdate(event.target.value);
-                        }}
-                      ></Input>
-                    </FormGroup>
-
-                    <FormGroup>
-                      <Label for="Telefono">Telefono</Label>
-                      <Input
-                        id="Telefono"
-                        placeholder="Telefono"
-                        defaultValue={val.Telefono}
-                        onChange={(event) => {
-                          setTelefonoUpdate(event.target.value);
-                        }}
-                      ></Input>
-                    </FormGroup>
-
-                    <Row>
-                      <Col md={12}>
-                        <FormGroup>
-                          <Label for="C_Sucursal">Codigo Sucursal</Label>
-                          <Input
-                            type="select"
-                            id="C_Sucursal"
-                            defaultValue={val.C_Sucursal}
-                            onChange={(event) => {
-                              setC_sucursalUpdate(event.target.value);
-                            }}
-                          >
-                            <option disabled selected>
-                              C_Sucursal
-                            </option>
-                            {sucursalcombo.map((val, key) => {
-                              return (
-                                <option value={val.ID}>{val.Nombre}</option>
-                              );
-                            })}
-                          </Input>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                  </ModalBody>
-                  <ModalFooter>
-                    <Button
-                      color="primary"
-                      onClick={() => {
-                        updateEmpleado(val.ID);
-                        uploadpage();
-                      }}
-                    >
-                      ACTUALIZAR
-                    </Button>{" "}
-                    <Button color="danger" onClick={toggleUpdate}>
-                      Cancel
-                    </Button>
-                  </ModalFooter>
-                </>
-              );
-            })}
-          </Modal>
-
-          <Modal isOpen={modalDelete} toggle={toggleDelete}>
-            {eliminar.map((val, key) => {
-              return (
-                <>
-                  <ModalHeader toggle={toggleDelete}>
-                    ELIMINAR EMPLEADO
-                  </ModalHeader>
-                  <ModalBody>
-                    <FormGroup>
-                      <Label for="Pregunta">
-                        ¿Estas seguro de que quieres eliminar este EMPLEADO?
-                      </Label>
-                    </FormGroup>
-                    <Row>
-                      <Col md={12}>
-                        <FormGroup>
-                          <Input
-                            id="Nombre"
-                            placeholder="Nombre"
-                            defaultValue={val.Nombre}
-                            onChange={(event) => {
-                              setNombreDelete(event.target.value);
-                            }}
-                            disabled
-                          ></Input>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                  </ModalBody>
-                  <ModalFooter>
-                    <Button
-                      color="primary"
-                      onClick={() => {
-                        deleteEmpleado(val.ID);
-                        uploadpage();
-                      }}
-                    >
-                      ELIMINAR
-                    </Button>
-                    <Button color="danger" onClick={toggleDelete}>
-                      Cancel
-                    </Button>
-                  </ModalFooter>
-                </>
-              );
-            })}
-          </Modal>
-
-          <Outlet />
         </div>
+        <div className="cont-2">
+          <div className="title_header">
+            <div className="input_search">
+              <input type="search" onChange={handleChange} placeholder="Buscar..." />
+              <i className="bx bx-search-alt-2 search"></i>
+            </div>
+            <Button onClick={toggleSave}>Agregar Paciente</Button>
+          </div>
+        </div>
+        <div className="cont-3">
+          <div className="table-responsive">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Fecha Nac.</th>
+                  <th>Género</th>
+                  <th>Teléfono</th>
+                  <th>Dirección</th>
+                  <th>Contacto Emergencia</th>
+                  <th>Tel. Emergencia</th>
+                  <th>Sangre</th>
+                  <th>Alergias</th>
+                  <th>Seguro</th>
+                  <th>Activo</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {patientTemp.map((val) => (
+                  <tr key={val.PatientID}>
+                    <td>{val.PatientID}</td>
+                    <td>{val.DateOfBirth}</td>
+                    <td>{val.Gender}</td>
+                    <td>{val.PhoneNumber}</td>
+                    <td>{val.Address}</td>
+                    <td>{val.EmergencyContactName}</td>
+                    <td>{val.EmergencyContactPhone}</td>
+                    <td>{val.BloodType}</td>
+                    <td>{val.Allergies}</td>
+                    <td>{val.InsuranceProviderID}</td>
+                    <td>{val.IsActive ? "Sí" : "No"}</td>
+                    <td>
+                      <Button color="primary" onClick={() => cargarEditar(val.PatientID)}>Editar</Button>{" "}
+                      <Button color="danger" onClick={() => cargarEliminar(val.PatientID)}>Eliminar</Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Modal Save */}
+        <Modal isOpen={modalSave} toggle={toggleSave}>
+          <ModalHeader toggle={toggleSave}>Agregar Paciente</ModalHeader>
+          <ModalBody>
+            {[
+              { label: "Fecha de Nacimiento", key: "date", type: "date" },
+              { label: "Género", key: "gender" },
+              { label: "Teléfono", key: "phone" },
+              { label: "Dirección", key: "address" },
+              { label: "Contacto Emergencia", key: "ecName" },
+              { label: "Tel. Emergencia", key: "ecPhone" },
+              { label: "Tipo de Sangre", key: "blood" },
+              { label: "Alergias", key: "allergies" },
+              { label: "Seguro Médico (ID)", key: "insurance", type: "number" },
+            ].map((field, i) => (
+              <FormGroup key={i}>
+                <Label>{field.label}</Label>
+                <Input
+                  type={field.type || "text"}
+                  onChange={(e) => setSave({ ...save, [field.key]: e.target.value })}
+                />
+              </FormGroup>
+            ))}
+            <FormGroup check>
+              <Label check>
+                <Input
+                  type="checkbox"
+                  checked={save.active}
+                  onChange={(e) => setSave({ ...save, active: e.target.checked })}
+                />{' '}
+                Activo
+              </Label>
+            </FormGroup>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={savePatient}>Guardar</Button>
+            <Button color="danger" onClick={toggleSave}>Cancelar</Button>
+          </ModalFooter>
+        </Modal>
+
+        {/* Modal Edit */}
+        <Modal isOpen={modalUpdate} toggle={toggleUpdate}>
+          <ModalHeader toggle={toggleUpdate}>Editar Paciente</ModalHeader>
+          <ModalBody>
+            {Object.entries(edit).map(([key, val], i) => (
+              key !== 'active' ? (
+                <FormGroup key={i}>
+                  <Label>{key}</Label>
+                  <Input
+                    type={key === 'date' ? 'date' : 'text'}
+                    value={val}
+                    onChange={(e) => setEdit({ ...edit, [key]: e.target.value })}
+                  />
+                </FormGroup>
+              ) : null
+            ))}
+            <FormGroup check>
+              <Label check>
+                <Input
+                  type="checkbox"
+                  checked={edit.active}
+                  onChange={(e) => setEdit({ ...edit, active: e.target.checked })}
+                />{' '}
+                Activo
+              </Label>
+            </FormGroup>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={updatePatient}>Actualizar</Button>
+            <Button color="danger" onClick={toggleUpdate}>Cancelar</Button>
+          </ModalFooter>
+        </Modal>
+
+        {/* Modal Delete */}
+        <Modal isOpen={modalDelete} toggle={toggleDelete}>
+          <ModalHeader toggle={toggleDelete}>Eliminar Paciente</ModalHeader>
+          <ModalBody>
+            <p>¿Estás seguro de eliminar al paciente <b>{eliminar?.EmergencyContactName}</b>?</p>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="danger" onClick={deletePatient}>Eliminar</Button>
+            <Button color="secondary" onClick={toggleDelete}>Cancelar</Button>
+          </ModalFooter>
+        </Modal>
+
+        <Outlet />
       </div>
-    </>
+    </div>
   );
 };

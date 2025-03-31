@@ -39,7 +39,7 @@ const DoctorModel = sequelize.define("users.Doctors", {
     type: DataTypes.STRING(255),
     allowNull: true
   },
-  AvailabilityModelId: {
+  AvailabilityModeId: {
     type: DataTypes.SMALLINT,
     allowNull: false
   },
@@ -48,14 +48,12 @@ const DoctorModel = sequelize.define("users.Doctors", {
     allowNull: false
   },
   CreatedAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW, 
+    type: DataTypes.DATEONLY,
+    allowNull: false 
   },
   UpdatedAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW, 
+    type: DataTypes.DATEONLY,
+    allowNull: false
   },
   IsActive: {
     type: DataTypes.BOOLEAN,

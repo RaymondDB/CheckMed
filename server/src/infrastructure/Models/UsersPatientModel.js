@@ -44,14 +44,12 @@ const PatientModel = sequelize.define("users.Patients", {
     allowNull: false
   },
   CreatedAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW, 
+    type: DataTypes.DATEONLY,
+    allowNull: false
   },
   UpdatedAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW, 
+    type: DataTypes.DATEONLY,
+    allowNull: false
   },
   IsActive: {
     type: DataTypes.BOOLEAN,

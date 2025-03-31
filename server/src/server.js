@@ -19,6 +19,7 @@ app.use(express.json());
 app.use("/users", userRoutes);
 app.use("/doctors", doctorRoutes);
 app.use("/patients", patientRoutes);
+app.use("/login", userRoutes)
 
 
 const PORT = process.env.PORT || 3000;

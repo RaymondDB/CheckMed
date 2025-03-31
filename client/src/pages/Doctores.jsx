@@ -1,6 +1,8 @@
+// Doctors.jsx
 import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import "./css/Doctores.css";
+import Sidebar from "../components/Sidebar";
 import {
   Modal,
   ModalBody,
@@ -9,28 +11,21 @@ import {
   Button,
   Input,
   FormGroup,
-  Row,
-  Col,
   Label,
 } from "reactstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Axios from "axios";
-import Sidebar from "../components/Sidebar";
 
-export const Sucursales = () => {
-  /* SEARCH */
-  const [sucursalArray, setsucursalArray] = useState([]);
-  const [sucursalTemp, setsucursalTemp] = useState([]);
-  const [Busqueda, setBusqueda] = useState("");
+export const Doctors = () => {
+  const [doctorArray, setDoctorArray] = useState([]);
+  const [doctorTemp, setDoctorTemp] = useState([]);
+  const [busqueda, setBusqueda] = useState("");
 
-  /*Rellenar y BUscar*/
   const mostrar = () => {
-    Axios.get("http://localhost:3000/sucursales/mostrarSucursal").then(
-      (response) => {
-        setsucursalTemp(response.data);
-        setsucursalArray(response.data);
-      }
-    );
+    Axios.get("http://localhost:3000/doctors").then((response) => {
+      setDoctorArray(response.data.data);
+      setDoctorTemp(response.data.data);
+    });
   };
 
   useEffect(() => {
@@ -38,30 +33,19 @@ export const Sucursales = () => {
   }, []);
 
   const filtrarInfo = (busqueda) => {
-    var resultadobusqueda = sucursalArray.filter((elemento) => {
-      if (
-        elemento.ID.toString().toLowerCase().includes(busqueda.toLowerCase()) ||
-        elemento.Nombre.toString()
-          .toLowerCase()
-          .includes(busqueda.toLowerCase()) ||
-        elemento.Direccion.toString()
-          .toLowerCase()
-          .includes(busqueda.toLowerCase())
-      ) {
-        return elemento;
-      }
-    });
-    setsucursalTemp(resultadobusqueda);
+    const resultado = doctorArray.filter((item) =>
+      Object.values(item).some((val) =>
+        val?.toString().toLowerCase().includes(busqueda.toLowerCase())
+      )
+    );
+    setDoctorTemp(resultado);
   };
-  const handlechange = (e) => {
+
+  const handleChange = (e) => {
     setBusqueda(e.target.value);
     filtrarInfo(e.target.value);
   };
 
-  function uploadpage() {
-    window.location.reload(false);
-  }
-  /*GUARDAR SUCURSALES*/
   const [modalSave, setModalSave] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
@@ -69,275 +53,182 @@ export const Sucursales = () => {
   const toggleUpdate = () => setModalUpdate(!modalUpdate);
   const toggleDelete = () => setModalDelete(!modalDelete);
 
-  /* Saves */
-  const [nombreSave, setNombreSave] = useState("");
-  const [direccionSave, setDireccionSave] = useState("");
+  const [save, setSave] = useState({
+    SpecialtyID: "",
+    LicenseNumber: "",
+    PhoneNumber: "",
+    YearsOfExperience: "",
+    Education: "",
+    Bio: "",
+    ConsultationFee: "",
+    ClinicAddress: "",
+    AvailabilityModeId: "",
+    LicenseExpirationDate: "",
+    IsActive: true,
+  });
 
-  const saveSucursal = () => {
-    Axios.post("http://localhost:3000/sucursales/guardarSucursal", {
-      Nombre: nombreSave,
-      Direccion: direccionSave,
-    }).then(() => {
+  const saveDoctor = () => {
+    Axios.post("http://localhost:3000/doctors", save).then(() => {
       toggleSave();
-      console.log("Sucursal agregada");
+      mostrar();
     });
   };
 
-  /*EDIT*/
-  const [actualizar, setactualizar] = useState([]);
-  const [nombreUpdate, setNombreUpdate] = useState("");
-  const [direccionUpdate, setDireccionUpdate] = useState("");
+  const [edit, setEdit] = useState({});
+  const [selectedId, setSelectedId] = useState(null);
 
-  const Actualizar = (id) => {
-    Axios.post("http://localhost:3000/sucursales/All", {
-      ID: id,
-    }).then((response) => {
-      setactualizar(response.data);
-    });
-  };
-
-  const updateSucursal = (id) => {
-    Axios.post("http://localhost:3000/sucursales/sucAct", {
-      ID: id,
-      Nombre: nombreUpdate,
-      Direccion: direccionUpdate,
-    }).then(() => {
+  const cargarEditar = (id) => {
+    setSelectedId(id);
+    Axios.get(`http://localhost:3000/doctors/${id}`).then((res) => {
+      setEdit(res.data);
       toggleUpdate();
     });
   };
 
-  /*DELETE*/
-  const [eliminar, setEliminar] = useState([]);
-  const [nombreDelete, setNombreDelete] = useState("");
-
-  const Eliminar = (id) => {
-    Axios.post("http://localhost:3000/sucursales/All", {
-      ID: id,
-    }).then((response) => {
-      setEliminar(response.data);
+  const updateDoctor = () => {
+    Axios.put(`http://localhost:3000/doctors/${selectedId}`, edit).then(() => {
+      toggleUpdate();
+      mostrar();
     });
   };
 
-  const deleteSucursal = (id) => {
-    Axios.post("http://localhost:3000/sucursales/eliminar", {
-      ID: id,
-    }).then(() => {
+  const [eliminar, setEliminar] = useState({});
+  const cargarEliminar = (id) => {
+    setSelectedId(id);
+    Axios.get(`http://localhost:3000/doctors/${id}`).then((res) => {
+      setEliminar(res.data);
       toggleDelete();
     });
   };
 
+  const deleteDoctor = () => {
+    Axios.delete(`http://localhost:3000/doctors/${selectedId}`).then(() => {
+      toggleDelete();
+      mostrar();
+    });
+  };
+
   return (
-    <>
-      <div className="app">
-        <Sidebar />
-        <div className="contenido">
-          <div className="cont-1">
-            <div className="title_table">
-              <i className="bx bx-store-alt"></i>
-              <h1>SUCURSALES</h1>
-            </div>
+    <div className="app">
+      <Sidebar />
+      <div className="contenido">
+        <div className="cont-1">
+          <div className="title_table">
+            <i className="bx bx-store-alt"></i>
+            <h1>Doctores</h1>
           </div>
-          <div className="cont-2">
-            <div className="title_header">
-              <div className="input_search">
-                <input
-                  type="search"
-                  onChange={handlechange}
-                  placeholder="Buscar..."
-                />
-                <i className="bx bx-search-alt-2 search"></i>
-              </div>
-              <Button onClick={toggleSave}>AGREGAR SUCURSAL </Button>
-            </div>
-          </div>
-          <div className="cont-3">
-            <div className="table-responsive">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Dirección</th>
-                    <th scope="col">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody className="table-group-divider">
-                  {sucursalTemp.map((val, key) => {
-                    return (
-                      <tr>
-                        <td>{val.ID}</td>
-                        <td>{val.Nombre}</td>
-                        <td>{val.Direccion}</td>
-                        <td>
-                          {""}
-                          <Button
-                            color="primary"
-                            className="space"
-                            onClick={() => {
-                              Actualizar(val.ID);
-                              setNombreUpdate(val.Nombre);
-                              setDireccionUpdate(val.Direccion);
-                              toggleUpdate();
-                            }}
-                          >
-                            Editar
-                          </Button>
-                          <Button
-                            color="danger"
-                            className="space"
-                            onClick={() => {
-                              Eliminar(val.ID);
-                              setNombreDelete(val.Nombre);
-                              toggleDelete();
-                            }}
-                          >
-                            ELIMINAR
-                          </Button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <Modal isOpen={modalSave} toggle={toggleSave}>
-            <ModalHeader toggle={toggleSave}>AGREGAR SUCURSAL</ModalHeader>
-            <ModalBody>
-              <FormGroup>
-                <Label for="Nombre">Nombre</Label>
-                <Input
-                  id="Nombre"
-                  placeholder="Nombre"
-                  onChange={(event) => {
-                    setNombreSave(event.target.value);
-                  }}
-                ></Input>
-              </FormGroup>
-
-              <FormGroup>
-                <Label for="Direccion">Direccion</Label>
-                <Input
-                  id="Direccion"
-                  placeholder="Direccion"
-                  onChange={(event) => {
-                    setDireccionSave(event.target.value);
-                  }}
-                ></Input>
-              </FormGroup>
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                color="primary"
-                onClick={() => {
-                  saveSucursal();
-                  uploadpage();
-                }}
-              >
-                GUARDAR
-              </Button>{" "}
-              <Button color="danger" onClick={toggleSave}>
-                Cancel
-              </Button>
-            </ModalFooter>
-          </Modal>
-          <Modal isOpen={modalUpdate} toggle={toggleUpdate}>
-            {actualizar.map((val, key) => {
-              return (
-                <>
-                  <ModalHeader toggle={toggleUpdate}>
-                    ACTUALIZAR SUCURSAL
-                  </ModalHeader>
-                  <ModalBody>
-                    <FormGroup>
-                      <Label for="Nombre">Nombre</Label>
-                      <Input
-                        id="Nombre"
-                        placeholder="Nombre"
-                        defaultValue={val.Nombre}
-                        onChange={(event) => {
-                          setNombreUpdate(event.target.value);
-                        }}
-                      ></Input>
-                    </FormGroup>
-
-                    <FormGroup>
-                      <Label for="Direccion">Direccion</Label>
-                      <Input
-                        id="Direccion"
-                        placeholder="Direccion"
-                        defaultValue={val.Direccion}
-                        onChange={(event) => {
-                          setDireccionUpdate(event.target.value);
-                        }}
-                      ></Input>
-                    </FormGroup>
-                  </ModalBody>
-                  <ModalFooter>
-                    <Button
-                      color="primary"
-                      onClick={() => {
-                        updateSucursal(val.ID);
-                        uploadpage();
-                      }}
-                    >
-                      ACTUALIZAR
-                    </Button>
-                    <Button color="danger" onClick={toggleUpdate}>
-                      Cancel
-                    </Button>
-                  </ModalFooter>
-                </>
-              );
-            })}
-          </Modal>
-          <Modal isOpen={modalDelete} toggle={toggleDelete}>
-            {eliminar.map((val, key) => {
-              return (
-                <>
-                  <ModalHeader toggle={toggleDelete}>
-                    ELIMINAR SUCURSAL
-                  </ModalHeader>
-                  <ModalBody>
-                    <FormGroup>
-                      <Label for="Pregunta">¿Estas seguro de que quieres eliminar esta Sucursal?</Label>
-                    </FormGroup>
-                    <Row>
-                      <Col md={12}>
-                        <FormGroup>
-                          <Input
-                            id="Nombre"
-                            placeholder="Nombre"
-                            defaultValue={val.Nombre}
-                            onChange={(event) => {
-                              setNombreDelete(event.target.value);
-                            }}
-                          disabled></Input>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                  </ModalBody>
-                  <ModalFooter>
-                    <Button
-                      color="primary"
-                      onClick={() => {
-                        deleteSucursal(val.ID);
-                        uploadpage();
-                      }}
-                    >
-                      ELIMINAR
-                    </Button>
-                    <Button color="danger" onClick={toggleDelete}>
-                      Cancel
-                    </Button>
-                  </ModalFooter>
-                </>
-              );
-            })}
-          </Modal>
-          <Outlet />
         </div>
+
+        <div className="cont-2">
+          <div className="title_header">
+            <div className="input_search">
+              <input type="search" onChange={handleChange} placeholder="Buscar..." />
+              <i className="bx bx-search-alt-2 search"></i>
+            </div>
+            <Button onClick={toggleSave}>Agregar Doctor</Button>
+          </div>
+        </div>
+
+        <div className="cont-3">
+          <div className="table-responsive">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Licencia</th>
+                  <th>Teléfono</th>
+                  <th>Experiencia</th>
+                  <th>Dirección</th>
+                  <th>Especialidad</th>
+                  <th>Activo</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {doctorTemp.map((val) => (
+                  <tr key={val.DoctorID}>
+                    <td>{val.DoctorID}</td>
+                    <td>{val.LicenseNumber}</td>
+                    <td>{val.PhoneNumber}</td>
+                    <td>{val.YearsOfExperience}</td>
+                    <td>{val.ClinicAddress}</td>
+                    <td>{val.SpecialtyID}</td>
+                    <td>{val.IsActive ? "Sí" : "No"}</td>
+                    <td>
+                      <Button color="primary" onClick={() => cargarEditar(val.DoctorID)}>Editar</Button>{" "}
+                      <Button color="danger" onClick={() => cargarEliminar(val.DoctorID)}>Eliminar</Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Modal Save */}
+        <Modal isOpen={modalSave} toggle={toggleSave}>
+          <ModalHeader toggle={toggleSave}>Agregar Doctor</ModalHeader>
+          <ModalBody>
+            {Object.entries(save).map(([key, value]) => (
+              key !== "IsActive" ? (
+                <FormGroup key={key}>
+                  <Label>{key}</Label>
+                  <Input
+                    type={key.includes("Date") ? "date" : key === "ConsultationFee" ? "number" : "text"}
+                    onChange={(e) => setSave({ ...save, [key]: e.target.value })}
+                  />
+                </FormGroup>
+              ) : null
+            ))}
+            <FormGroup check>
+              <Label check>
+                <Input type="checkbox" checked={save.IsActive} onChange={(e) => setSave({ ...save, IsActive: e.target.checked })} /> Activo
+              </Label>
+            </FormGroup>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={saveDoctor}>Guardar</Button>
+            <Button color="danger" onClick={toggleSave}>Cancelar</Button>
+          </ModalFooter>
+        </Modal>
+
+        {/* Modal Edit */}
+        <Modal isOpen={modalUpdate} toggle={toggleUpdate}>
+          <ModalHeader toggle={toggleUpdate}>Editar Doctor</ModalHeader>
+          <ModalBody>
+            {Object.entries(edit).map(([key, val]) => (
+              key !== "DoctorID" ? (
+                <FormGroup key={key}>
+                  <Label>{key}</Label>
+                  <Input
+                    type={key.includes("Date") ? "date" : key === "ConsultationFee" ? "number" : "text"}
+                    value={val || ""}
+                    onChange={(e) => setEdit({ ...edit, [key]: e.target.type === 'checkbox' ? e.target.checked : e.target.value })}
+                  />
+                </FormGroup>
+              ) : null
+            ))}
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={updateDoctor}>Actualizar</Button>
+            <Button color="danger" onClick={toggleUpdate}>Cancelar</Button>
+          </ModalFooter>
+        </Modal>
+
+        {/* Modal Delete */}
+        <Modal isOpen={modalDelete} toggle={toggleDelete}>
+          <ModalHeader toggle={toggleDelete}>Eliminar Doctor</ModalHeader>
+          <ModalBody>
+            <p>¿Estás seguro de eliminar al doctor <b>{eliminar?.LicenseNumber}</b>?</p>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="danger" onClick={deleteDoctor}>Eliminar</Button>
+            <Button color="secondary" onClick={toggleDelete}>Cancelar</Button>
+          </ModalFooter>
+        </Modal>
+
+        <Outlet />
       </div>
-    </>
+    </div>
   );
 };

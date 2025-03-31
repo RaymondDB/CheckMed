@@ -22,7 +22,7 @@ class DoctorService {
       Bio,
       ConsultationFee,
       ClinicAddress,
-      AvailabilityModelId,
+      AvailabilityModeId,
       LicenseExpirationDate,
       IsActive
     } = doctorData;
@@ -37,7 +37,7 @@ class DoctorService {
     console.log("Bio:", Bio);
     console.log("ConsultationFee:", ConsultationFee);
     console.log("ClinicAddress:", ClinicAddress);
-    console.log("AvailabilityModelId:", AvailabilityModelId);
+    console.log("AvailabilityModeId:", AvailabilityModeId);
     console.log("LicenseExpirationDate:", LicenseExpirationDate);
     console.log("IsActive:", IsActive);
 
@@ -72,7 +72,7 @@ class DoctorService {
       Bio,
       ConsultationFee,
       ClinicAddress,
-      AvailabilityModelId,
+      AvailabilityModeId,
       LicenseExpirationDate,
       CreatedAt: new Date(),
       UpdatedAt: new Date(),
@@ -116,6 +116,22 @@ class DoctorService {
     EventBus.emit("DoctorFetched", doctor.data);
     return doctor;
   }
+
+  async getAllDoctors() {
+    try {
+      const result = await DoctorRepository.getAllDoctors();
+
+      if (!result.success || !result.data) {
+        return OperationResult.failure("No se encontraron usuarios.");
+      }
+
+      return OperationResult.success(result.data);
+    } catch (error) {
+        console.error("Error al obtener usuarios:", error);
+        return OperationResult.failure("Error al obtener usuarios.");
+      }
+  }
+
 
   async updateDoctor(DoctorID, updatedFields) {
     console.log("🛠️ Buscando doctor con ID:", DoctorID);
@@ -178,6 +194,5 @@ class DoctorDomainService {
   }
 }
 
-module.exports = DoctorDomainService;
 
 module.exports = new DoctorService();

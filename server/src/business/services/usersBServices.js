@@ -1,12 +1,11 @@
 const UserDomainService = require("../../domain/services/usersServices");
-const UserRepository = require("../../repositories/implementations/UsersImplementation");
-const EventBus = require("../listeners/eventBus");
+const EventBus = require("../../domain/listeners/eventBus");
 const OperationResult = require("../../helpers/OperationResult");
-const ValidationService = require("../rules/usersRules");
-const { sequelize } = require("../../infrastructure/db");
 const Email = require("../../domain/valueObjects/userEmail")
+const jwt = require("jsonwebtoken");
+const JWT_SECRET = process.env.JWT_SECRET || "clave123"; 
 
-class UserService {
+class UserBService {
   constructor({ userRepository, doctorRepository, patientRepository }) {
     this.userRepository = userRepository;
     this.doctorRepository = doctorRepository;
@@ -71,7 +70,7 @@ class UserService {
           Bio: userData.Bio,
           ConsultationFee: userData.ConsultationFee,
           ClinicAddress: userData.ClinicAddress,
-          AvailabilityModelId: userData.AvailabilityModelId,
+          AvailabilityModeId: userData.AvailabilityModeId,
           LicenseExpirationDate: userData.LicenseExpirationDate,
           CreatedAt: new Date(),
           UpdatedAt: new Date(),
@@ -118,7 +117,37 @@ class UserService {
       console.error("Error en la transacción:", error.message);
       return OperationResult.failure(error.message);
     }
+
   }
+  
+
 }
 
-module.exports = UserService;
+
+async function login({ Email, Password }) {
+  if (!Email || !Password) {
+    return OperationResult.failure("Email y contraseña son obligatorios.");
+  }
+
+  const user = await this.userRepository.findByEmail(Email);
+  if ( !user.success || !user.data) {
+    return OperationResult.failure("Credenciales inválidas.");
+  }
+
+  // Validar contraseña (si estás usando hash, usa bcrypt.compare)
+  if (user.data.Password !== Password) {
+    return OperationResult.failure("Contraseña incorrecta.");
+  }
+
+  // Generar el token
+  const token = jwt.sign(
+    { UserID: user.data.UserID, Email: user.data.Email, RoleID: user.data.RoleID },
+    JWT_SECRET,
+    { expiresIn: "1h" }
+  );
+
+  return OperationResult.success({ token });
+}
+
+
+module.exports = { login, UserBService }

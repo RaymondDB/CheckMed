@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const UserService = require("../../domain/services/usersServices");
+const { login, UserBService } = require("../../business/services/usersBServices");
+
 
 
 router.post("/", async (req, res) => {
@@ -31,6 +33,14 @@ router.get("/:id", async (req, res) => {
   res.json(result);
 });
 
+
+router.get("/", async (req, res) => {
+  const result = await UserService.getAllUsers();
+
+  if (!result.success) return res.status(404).json(result);
+  res.status(200).json(result);
+});
+
 router.put("/:id", async (req, res) => {
   const result = await UserService.updateUser(req.params.id, req.body);
   if (!result.success) return res.status(400).json(result);
@@ -42,5 +52,16 @@ router.delete("/:id", async (req, res) => {
   if (!result.success) return res.status(404).json(result);
   res.json(result);
 });
+
+console.log("LOGIN FUNC:", typeof login); // debería decir: function
+
+router.post("/login", async (req, res) => {
+  const { Email, Password } = req.body;
+  const result = await login({ Email, Password });
+
+  if (!result.success) return res.status(401).json(result);
+  res.status(200).json(result);
+});
+
 
 module.exports = router;

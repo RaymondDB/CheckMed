@@ -1,10 +1,9 @@
 import "./pages/css/App.css"; //App.css
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Home } from "./pages/Home";
-import { Empleados } from "./pages/Pacientes";
+import { Patients } from "./pages/Pacientes";
 import { Usuarios } from "./pages/Usuarios";
-import { Sucursales } from "./pages/Doctores";
-import Login from "./pages/Login";
+import { Doctors } from "./pages/Doctores";
 import { Provider } from "./auth/userContext";
 import { Page404 } from "./pages/404";
 
@@ -13,10 +12,10 @@ function App() {
     <>
       <Provider>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<Home/ >} />
           <Route path="/Home" element={<Home />} />
-          <Route path="/Sucursales" element={<Sucursales />} />
-          <Route path="/Empleados" element={<Empleados />} />
+          <Route path="/Doctors" element={<Doctors />} />
+          <Route path="/Patients" element={<Patients />} />
           <Route path="/Usuarios" element={<Usuarios />} />
           <Route path="*" element={<Page404 />} />
         </Routes>

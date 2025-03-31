@@ -1,9 +1,8 @@
 const OperationResult = require("../../helpers/OperationResult");
 const { sequelize } = require("../../infrastructure/db/dbconfig");
 const Patient = require("../../infrastructure/models/UsersPatientModel");
-const moment = require("moment")
 
-const now = moment().format("YYYY-MM-DD HH:mm:ss");
+const today = new Date().toISOString().split("T")[0];
 
 class PatientsImplementation {
   async findById(PatientID) {
@@ -30,6 +29,20 @@ class PatientsImplementation {
     }
   }
 
+  async getAllPatients() {
+    try {
+      const patients = await Patient.findAll();
+
+      if (!patients) return OperationResult.failure("Usuario no encontrado.");
+
+      console.log(patients)
+      return OperationResult.success(patients);
+    } catch (error) {
+      return OperationResult.failure("Error al obtener todos los usuarios.", error);
+    }
+  }
+  
+
   async save(patientData, transaction) {
     try {
       const patient = await Patient.create({
@@ -42,8 +55,8 @@ class PatientsImplementation {
         BloodType: patientData.BloodType,
         Allergies: patientData.Allergies,
         InsuranceProviderID: patientData.InsuranceProviderID,
-        CreatedAt: now,
-        UpdatedAt: now,
+        CreatedAt: today,
+        UpdatedAt: today,
         IsActive: patientData.IsActive !== undefined ? patientData.IsActive : true,
       }, { transaction });
 

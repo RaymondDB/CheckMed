@@ -1,9 +1,9 @@
 const { createContainer, asClass } = require("awilix");
 
 // Importamos los servicios de negocio
-const UserService = require("../src/business/services");
-const DoctorService = require("../src/business/services");
-const PatientService = require("../src/business/services");
+const UserService = require("../src/business/services/usersBServices");
+const DoctorService = require("../src/business/services/usersDoctorBServices");
+const PatientService = require("../src/business/services/usersPatientsBServices");
 
 // Importamos los repositorios
 const UserRepositoryImpl = require("../src/repositories/implementations/UsersImplementation");

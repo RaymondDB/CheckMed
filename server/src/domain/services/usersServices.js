@@ -3,6 +3,7 @@ const EventBus = require("../listeners/eventBus");
 const OperationResult = require("../../helpers/OperationResult");
 const ValidationService = require("./validationService");
 
+UserRepository.getAllUsers()
 class UserService {
   async createUser(userData) {
     console.log("USERDATA RECIBIDO EN SERVICE:", userData); // Verifica si el objeto completo llega correctamente
@@ -70,6 +71,20 @@ class UserService {
     return userResult;
 }
 
+  async getAllUsers() {
+    try {
+      const result = await UserRepository.getAllUsers();
+
+      if (!result.success || !result.data) {
+        return OperationResult.failure("No se encontraron usuarios.");
+      }
+
+      return OperationResult.success(result.data);
+    } catch (error) {
+        console.error("Error al obtener usuarios:", error);
+        return OperationResult.failure("Error al obtener usuarios.");
+      }
+  }
 
   async getUserById(UserID) {
     const user = await UserRepository.findById(UserID);
@@ -115,6 +130,7 @@ class UserService {
 
     return deleteResult;
   }
+  
 }
 
 
@@ -130,6 +146,7 @@ class UserDomainService {
     return { success: true };
   }
 }
+
 
 module.exports = UserDomainService;
 

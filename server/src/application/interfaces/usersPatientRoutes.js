@@ -14,6 +14,13 @@ router.get("/:id", async (req, res) => {
   res.json(result);
 });
 
+router.get("/", async (req, res) => {
+  const result = await PatientService.getAllPatients();
+
+  if (!result.success) return res.status(404).json(result);
+  res.json(result);
+});
+
 router.put("/:id", async (req, res) => {
   const result = await PatientService.updatePatient(req.params.id, req.body);
   if (!result.success) return res.status(400).json(result);

@@ -29,11 +29,11 @@ const UserModel = sequelize.define("users.Users", {
     allowNull: true  // En la BD permite NULL, así que lo dejamos así
   },
   CreatedAt: { 
-    type: DataTypes.DATE, 
+    type: DataTypes.DATEONLY, 
     allowNull: true  // Puede ser NULL según la BD
   },
   UpdatedAt: { 
-    type: DataTypes.DATE, 
+    type: DataTypes.DATEONLY, 
     allowNull: true  // Puede ser NULL según la BD
   },
   IsActive: { 

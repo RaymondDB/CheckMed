@@ -8,8 +8,8 @@ import React, { useState, useEffect } from "react";
 
 export const Home = () => {
   const [inventarioTemp, setinventarioTemp] = useState([]);
-  const [empleadoTemp, setEmpleadoTemp] = useState([]);
-  const [sucursalTemp, setSucursalTemp] = useState([]);
+  const [PatientTemp, setPatientTemp] = useState([]);
+  const [DoctorTemp, setDoctorTemp] = useState([]);
 
   const mostrar = () => {
     Axios.get("http://localhost:3000/inventario/mostrarHome").then(
@@ -24,9 +24,9 @@ export const Home = () => {
   }, []);
 
   const mostrarEmple = () => {
-    Axios.get("http://localhost:3000/empleados/contarEmpleados").then(
+    Axios.get("http://localhost:3000/Patients/contarPatients").then(
       (response) => {
-        setEmpleadoTemp(response.data);
+        setPatientTemp(response.data);
       }
     );
   };
@@ -35,16 +35,16 @@ export const Home = () => {
     mostrarEmple();
   }, []);
 
-  const mostrarSucursal = () => {
-    Axios.get("http://localhost:3000/sucursales/contarSucursales").then(
+  const mostrarDoctor = () => {
+    Axios.get("http://localhost:3000/Doctores/contarDoctors").then(
       (response) => {
-        setSucursalTemp(response.data);
+        setDoctorTemp(response.data);
       }
     );
   };
 
   useEffect(() => {
-    mostrarSucursal();
+    mostrarDoctor();
   }, []);
 
 
@@ -67,25 +67,25 @@ export const Home = () => {
                   </div>
                 );
               })}
-              {empleadoTemp.map((val, key) => {
+              {PatientTemp.map((val, key) => {
                 return (
                   <div className="estiloWidget">
                     <div className="estiloDetalles">
                       <div className="estiloRespuesta">
                         Pacientes
-                        <div className="estiloTitulo">{val.Empleados}</div>
+                        <div className="estiloTitulo">{val.Patients}</div>
                       </div>
                     </div>
                   </div>
                 );
               })}
-              {sucursalTemp.map((val, key) => {
+              {DoctorTemp.map((val, key) => {
                 return (
                   <div className="estiloWidget">
                     <div className="estiloDetalles">
                       <div className="estiloRespuesta">
                         Doctores
-                        <div className="estiloTitulo">{val.Sucursal}</div>
+                        <div className="estiloTitulo">{val.Doctor}</div>
                       </div>
                     </div>
                   </div>

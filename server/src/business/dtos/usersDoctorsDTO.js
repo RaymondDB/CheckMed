@@ -9,7 +9,7 @@ class DoctorDTO {
     bio,
     consultationFee,
     clinicAddress,
-    availabilityModelId,
+    AvailabilityModeId,
     licenseExpirationDate,
     isActive,
     createdAt,
@@ -24,7 +24,7 @@ class DoctorDTO {
     this.bio = bio;
     this.consultationFee = consultationFee;
     this.clinicAddress = clinicAddress;
-    this.availabilityModelId = availabilityModelId;
+    this.AvailabilityModeId = AvailabilityModeId;
     this.licenseExpirationDate = licenseExpirationDate;
     this.isActive = isActive;
     this.createdAt = createdAt;
@@ -42,7 +42,7 @@ class DoctorDTO {
       bio: model.Bio,
       consultationFee: model.ConsultationFee,
       clinicAddress: model.ClinicAddress,
-      availabilityModelId: model.AvailabilityModelId,
+      AvailabilityModeId: model.AvailabilityModeId,
       licenseExpirationDate: model.LicenseExpirationDate,
       isActive: model.IsActive,
       createdAt: model.CreatedAt,

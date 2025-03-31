@@ -30,13 +30,13 @@ const Sidebar = () => {
           </Link>
         </li>
         <li>
-          <Link to="/Sucursales" className="link">
+          <Link to="/Doctors" className="link">
             <i className="bx bx-store-alt"></i>
             <span className="links-name">Doctores</span>
           </Link>
         </li>
         <li>
-          <Link to="/Empleados" className="link">
+          <Link to="/Patients" className="link">
             <i className="bx bx-group"></i>
             <span className="links-name">Pacientes</span>
           </Link>

@@ -81,9 +81,23 @@ class PatientService {
     if (!patient.success) {
       return OperationResult.failure("Paciente no encontrado.");
     }
-
     EventBus.emit("PatientFetched", patient.data);
     return patient;
+  }
+
+  async getAllPatients() {
+    try {
+      const result = await PatientRepository.getAllPatients();
+
+      if (!result.success || !result.data) {
+        return OperationResult.failure("No se encontraron usuarios.");
+      }
+
+      return OperationResult.success(result.data);
+    } catch (error) {
+        console.error("Error al obtener usuarios:", error);
+        return OperationResult.failure("Error al obtener usuarios.");
+      }
   }
 
   async updatePatient(PatientID, updatedFields) {
