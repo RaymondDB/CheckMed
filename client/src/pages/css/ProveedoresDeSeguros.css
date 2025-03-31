@@ -1,0 +1,176 @@
+#root {
+    height: 100%;
+    width: 100%;
+}
+  
+.app {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+.cont-1 {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 15%;
+}
+
+.contenido{
+
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    padding-left: 10px;
+}
+
+.title_table {
+    display: flex;
+    border-radius: 20px;
+    background-color: #1C2C57;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+    margin: 10px;
+}
+
+.title_table{
+    color: white;
+}
+
+.title_table h1{
+    margin: 0;
+}
+.title_table i{
+    font-size: 35px;
+    margin-right: 10px;
+}
+
+.cont-2{
+    position: relative;
+    width: 100%;
+    height: 10%;
+}
+
+.title_header{
+    border-bottom: 5px solid grey;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 10px 0 10px;
+}
+
+.title_header button{
+    outline: none;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    background-color: #1C2C57;
+    font-size: 14px;
+    height: 40px;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.title_header button:hover{
+    background-color: #A4B9DD;
+    cursor: pointer;
+}
+
+.title_header select{
+    border: none;
+    border-bottom: 1px solid grey;
+    width: 200px;
+  
+}
+
+.input_search{
+    display: flex;
+    position: relative;
+}
+
+.input_search input{
+    border-radius: 30px;
+    width: 100%;
+    outline: none;
+    padding: 5px 10px;
+    border: 1px solid #c9c9c9;
+    box-sizing: border-box;
+    padding-right: 50px;
+}
+
+.input_search .search{
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translate(-50%, -50%);
+
+}
+
+.input_search i{
+    color: black;
+}
+.cont-3{
+    position: relative;
+    width: 100%;
+    height: 71%;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.table-responsive table{
+    height: 100%;
+}
+
+.table-responsive{
+    height: 100%;
+}
+.cont-3 table{
+    position: relative;
+    width: 100%;
+    height: 73.5%;
+}
+.icon{
+    font-size: 20px;
+    margin-left: 2px;
+    color: black;
+    cursor: pointer;
+}
+
+thead{
+    background-color: #1C2C57;
+    color: white;
+    position: sticky;
+    border-radius: 10px;
+}
+
+
+.bxs-edit:hover{
+    background-color: #173e41;
+    color: white;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.trach:hover{
+    background-color: red;
+    color: white;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.Button{
+    padding: 0;
+}
+
+.space{
+    margin-right: 2px;
+}
