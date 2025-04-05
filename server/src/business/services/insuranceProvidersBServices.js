@@ -86,6 +86,7 @@ class InsuranceProvidersService {
     State: insuranceProviderData.State,
     ContactNumber: insuranceProviderData.ContactNumber,
     Country: insuranceProviderData.Country,
+    IsPreferred: insuranceProviderData.IsPreferred ?? false,
     ZipCode: insuranceProviderData.ZipCode,
     LogoUrl: insuranceProviderData.LogoUrl,
     CustomerSupportContact: insuranceProviderData.CustomerSupportContact,

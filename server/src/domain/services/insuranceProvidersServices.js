@@ -53,7 +53,7 @@ class InsuranceProvidersService {
     console.log("MaxCoverageAmount:", MaxCoverageAmount);
     console.log("IsActive:", IsActive);
 
-    if (!InsuranceProviderID || !Name || !Email || !Address || !CoverageDetails || !IsPreferred || !NetworkTypeId) {
+    if (!InsuranceProviderID || !Name || !Email || !Address || !CoverageDetails || !NetworkTypeId) {
       console.error("Error: Faltan campos obligatorios en insuranceProviderData.");
       return OperationResult.failure('EmptyField');
     }
@@ -195,7 +195,7 @@ class InsuranceProvidersService {
     }
 
     if (!updatedFields.Name || !updatedFields.Email || !updatedFields.Address || 
-      !updatedFields.CoverageDetails || !updatedFields.IsPreferred || !updatedFields.NetworkTypeId) {
+      !updatedFields.CoverageDetails || !updatedFields.NetworkTypeId) {
       console.error("Error: Faltan campos obligatorios en insuranceProviderData.");
       return OperationResult.failure('EmptyField');
     }

@@ -32,14 +32,30 @@ export const InsuranceNetworkType = () => {
   }, []);
 
   const filtrarInfo = (busqueda) => {
-    const resultado = insuranceNetworkTypeArray.filter((item) =>
-      Object.values(item).some((val) =>
-        val?.toString().toLowerCase().includes(busqueda.toLowerCase())
-      )
-    );
-    setInsuranceNetworkTypeTemp(resultado);
+    var resultadobusqueda = insuranceNetworkTypeArray.filter((elemento) => {
+      if (
+        elemento.NetworkTypeId.toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+          elemento.Name.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()) ||
+          elemento.Description.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()) ||
+          elemento.CreatedAt.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()) ||
+          elemento.UpdatedAt.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()) ||
+          elemento.IsActive.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase())
+      ) {
+        return elemento;
+      }
+    });
+    setInsuranceNetworkTypeTemp(resultadobusqueda);
   };
-
   const handleChange = (e) => {
     setBusqueda(e.target.value);
     filtrarInfo(e.target.value);
@@ -53,44 +69,38 @@ export const InsuranceNetworkType = () => {
   const toggleDelete = () => setModalDelete(!modalDelete);
 
   const [save, setSave] = useState({
+    NetworkTypeID: "",
     Name: "",
     Description: "",
     IsActive: true,
   });
 
   const saveInsuranceNetworkType = () => {
-    Axios.post("hhttp://localhost:3000/insuranceNetworkType", {
-    Name: save.Name,
-    Description: save.Description,
-    IsActive: true,
-    }).then(() => {
+    Axios.post("http://localhost:3000/insuranceNetworkType", save).then(() => {
       toggleSave();
       mostrar();
     });
+    console.log("Datos a enviar:", save);
   };
 
-  const [edit, setEdit] = useState({});
+ const [edit, setEdit] = useState({});
   const [selectedId, setSelectedId] = useState(null);
 
   const cargarEditar = (id) => {
     setSelectedId(id);
     Axios.get(`http://localhost:3000/insuranceNetworkType/${id}`).then((res) => {
-        const val = res.data;
+      const val = res.data.data
       setEdit({
         Name: val.Name,
         Description: val.Description,
-        IsActive: true,
+        IsActive: val.IsActive
       });
       toggleUpdate();
     });
   };
 
   const updateInsuranceNetworkType = () => {
-    Axios.put(`http://localhost:3000/insuranceNetworkType/${selectedId}`, {
-        Name: edit.Name,
-        Description: edit.Description,
-        IsActive: true,
-    }).then(() => {
+    Axios.put(`http://localhost:3000/insuranceNetworkType/${selectedId}`, edit).then(() => {
       toggleUpdate();
       mostrar();
     });
@@ -100,7 +110,7 @@ export const InsuranceNetworkType = () => {
   const cargarEliminar = (id) => {
     setSelectedId(id);
     Axios.get(`http://localhost:3000/insuranceNetworkType/${id}`).then((res) => {
-      setEliminar(res.data);
+      setEliminar(res.data.data);
       toggleDelete();
     });
   };
@@ -118,8 +128,8 @@ export const InsuranceNetworkType = () => {
       <div className="contenido">
         <div className="cont-1">
           <div className="title_table">
-            <i className="bx bx-store-alt"></i>
-            <h1>Tipo de Red de Seguros</h1>
+            <i className="bx bx-shield-quarter"></i>
+            <h1>Tipos de Red de Seguros</h1>
           </div>
         </div>
 
@@ -141,20 +151,20 @@ export const InsuranceNetworkType = () => {
                   <th>ID</th>
                   <th>Nombre</th>
                   <th>Descripcion</th>
-                  <th>Esta activo</th>
+                  <th>Está activo</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 {insuranceNetworkTypeTemp.map((val) => (
-                  <tr key={val.InsuranceNetworkTypeID}>
-                    <td>{val.InsuranceNetworkTypeID}</td>
+                  <tr key={val.NetworkTypeId}>
+                    <td>{val.NetworkTypeId}</td>
                     <td>{val.Name}</td>
-                    <td>{val.Descripcion}</td>
+                    <td>{val.Description}</td>
                     <td>{val.IsActive ? "Sí" : "No"}</td>
                     <td>
-                      <Button color="primary" onClick={() => cargarEditar(val.InsuranceNetworkTypeID)}>Editar</Button>{" "}
-                      <Button color="danger" onClick={() => cargarEliminar(val.InsuranceNetworkTypeID)}>Eliminar</Button>
+                      <Button color="primary" className= "space" onClick={() => cargarEditar(val.NetworkTypeId)}>Editar</Button>{" "}
+                      <Button color="danger"  className= "space" onClick={() => cargarEliminar(val.NetworkTypeId)}>Eliminar</Button>
                     </td>
                   </tr>
                 ))}
@@ -167,18 +177,26 @@ export const InsuranceNetworkType = () => {
         <Modal isOpen={modalSave} toggle={toggleSave}>
         <ModalHeader toggle={toggleSave}>Agregar Tipo de Red de Seguros</ModalHeader>
         <ModalBody>
-            {[
+        {[
+            { label: "ID", key: "NetworkTypeID" },
             { label: "Nombre", key: "Name" },
             { label: "Descripcion", key: "Description" },
             ].map((field, i) => (
-                <FormGroup key={i}>
-                  <Label>{field.label}</Label>
-                  <Input
-                    type={field.type || "text"}
-                    onChange={(e) => setSave({ ...save, [field.key]: e.target.value })}
-                  />
-                </FormGroup>
-              ))}
+            <FormGroup key={i}>
+                <Label>{field.label}</Label>
+                <Input
+                type={field.type || "text"}
+                value={field.type === "checkbox" ? undefined : save[field.key] || (field.type === "number" ? "" : "")}
+                checked={field.type === "checkbox" ? save[field.key] : undefined}
+                onChange={(e) =>
+                    setSave({
+                    ...save,
+                    [field.key]: field.type === "checkbox" ? e.target.checked : field.type === "number" ? parseFloat(e.target.value) : e.target.value,
+                    })
+                }
+                />
+            </FormGroup>
+            ))}
               <FormGroup check>
                 <Label check>
                   <Input

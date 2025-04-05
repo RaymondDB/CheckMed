@@ -32,14 +32,51 @@ export const InsuranceProviders = () => {
   }, []);
 
   const filtrarInfo = (busqueda) => {
-    const resultado = insuranceProviderArray.filter((item) =>
-      Object.values(item).some((val) =>
-        val?.toString().toLowerCase().includes(busqueda.toLowerCase())
-      )
-    );
-    setInsuranceProviderTemp(resultado);
+    var resultadobusqueda = insuranceProviderArray.filter((elemento) => {
+      if (
+        elemento.InsuranceProviderID.toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+        elemento.Name.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()) ||
+        elemento.ContactNumber.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()) ||
+        elemento.Email.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()) ||
+        elemento.Address.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()) ||
+        elemento.City.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()) ||
+        elemento.State.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()) ||
+        elemento.Country.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()) ||
+        elemento.ZipCode.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()) ||
+        elemento.CoverageDetails.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()) ||
+        elemento.CreatedAt.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()) ||
+        elemento.UpdatedAt.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()) ||
+        elemento.IsActive.toString()
+          .toLowerCase()
+          .includes(busqueda.toLowerCase())
+      ) {
+        return elemento;
+      }
+    });
+    setInsuranceProviderTemp(resultadobusqueda);
   };
-
   const handleChange = (e) => {
     setBusqueda(e.target.value);
     filtrarInfo(e.target.value);
@@ -53,6 +90,7 @@ export const InsuranceProviders = () => {
   const toggleDelete = () => setModalDelete(!modalDelete);
 
   const [save, setSave] = useState({
+    InsuranceProviderID: "",
     Name: "",
     ContactNumber: "",
     Email: "",
@@ -73,7 +111,8 @@ export const InsuranceProviders = () => {
   });
 
   const saveInsuranceProvider = () => {
-    Axios.post("hhttp://localhost:3000/insuranceProviders", {
+    Axios.post("http://localhost:3000/insuranceProviders", {
+    InsuranceProviderID: save.InsuranceProviderID,
     Name: save.Name,
     ContactNumber: save.ContactNumber,
     Email: save.Email,
@@ -103,7 +142,7 @@ export const InsuranceProviders = () => {
   const cargarEditar = (id) => {
     setSelectedId(id);
     Axios.get(`http://localhost:3000/insuranceProviders/${id}`).then((res) => {
-        const val = res.data;
+      const val = res.data.data
       setEdit({
         Name: val.Name,
         ContactNumber: val.ContactNumber,
@@ -121,32 +160,14 @@ export const InsuranceProviders = () => {
         CustomerSupportContact: val.CustomerSupportContact,
         AcceptedRegions: val.AcceptedRegions,
         MaxCoverageAmount: val.MaxCoverageAmount,
-        IsActive: true,
+        IsActive: val.IsActive,
       });
       toggleUpdate();
     });
   };
 
   const updateInsuranceProvider = () => {
-    Axios.put(`http://localhost:3000/insuranceProviders/${selectedId}`, {
-        Name: edit.Name,
-        ContactNumber: edit.ContactNumber,
-        Email: edit.Email,
-        Website: edit.Website,
-        Address: edit.Address,
-        City: edit.City,
-        State: edit.State,
-        Country:  edit.Country,
-        ZipCode: edit.ZipCode,
-        CoverageDetails: edit.CoverageDetails,
-        LogoUrl: edit.LogoUrl,
-        IsPreferred: edit.IsPreferred,
-        NetworkTypeId: edit.NetworkTypeId,
-        CustomerSupportContact: edit.CustomerSupportContact,
-        AcceptedRegions: edit.AcceptedRegions,
-        MaxCoverageAmount: edit.MaxCoverageAmount,
-        IsActive: true,
-    }).then(() => {
+    Axios.put(`http://localhost:3000/insuranceProviders/${selectedId}`, edit).then(() => {
       toggleUpdate();
       mostrar();
     });
@@ -156,7 +177,7 @@ export const InsuranceProviders = () => {
   const cargarEliminar = (id) => {
     setSelectedId(id);
     Axios.get(`http://localhost:3000/insuranceProviders/${id}`).then((res) => {
-      setEliminar(res.data);
+      setEliminar(res.data.data);
       toggleDelete();
     });
   };
@@ -174,7 +195,7 @@ export const InsuranceProviders = () => {
       <div className="contenido">
         <div className="cont-1">
           <div className="title_table">
-            <i className="bx bx-store-alt"></i>
+            <i className="bx bx-shield"></i>
             <h1>Proveedores de seguros</h1>
           </div>
         </div>
@@ -196,29 +217,29 @@ export const InsuranceProviders = () => {
                 <tr>
                   <th>ID</th>
                   <th>Nombre</th>
-                  <th>Numero de contacto</th>
+                  <th>Número de contacto</th>
                   <th>Email</th>
                   <th>Sitio web</th>
-                  <th>Direccion</th>
+                  <th>Dirección</th>
                   <th>Ciudad</th>
                   <th>Estado</th>
-                  <th>Pais</th>
-                  <th>Codigo postal</th>
+                  <th>País</th>
+                  <th>Código postal</th>
                   <th>Detalles de cobertura</th>
                   <th>Enlace URL del logo</th>
                   <th>Es preferido</th>
                   <th>ID de la red de seguros</th>
-                  <th>Numero de contacto de la atencion al cliente</th>
+                  <th>Numero de contacto de la atención al cliente</th>
                   <th>Regiones aceptadas</th>
-                  <th>Cantidad maxima de cobertura</th>
-                  <th>Esta activo</th>
+                  <th>Cantidad máxima de cobertura</th>
+                  <th>Está activo</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 {insuranceProviderTemp.map((val) => (
-                  <tr key={val.InsurnaceProviderID}>
-                    <td>{val.InsurnaceProviderID}</td>
+                  <tr key={val.InsuranceProviderID}>
+                    <td>{val.InsuranceProviderID}</td>
                     <td>{val.Name}</td>
                     <td>{val.ContactNumber}</td>
                     <td>{val.Email}</td>
@@ -237,8 +258,8 @@ export const InsuranceProviders = () => {
                     <td>{val.MaxCoverageAmount}</td>
                     <td>{val.IsActive ? "Sí" : "No"}</td>
                     <td>
-                      <Button color="primary" onClick={() => cargarEditar(val.InsurnaceProviderID)}>Editar</Button>{" "}
-                      <Button color="danger" onClick={() => cargarEliminar(val.InsurnaceProviderID)}>Eliminar</Button>
+                      <Button color="primary" onClick={() => cargarEditar(val.InsuranceProviderID)}>Editar</Button>{" "}
+                      <Button color="danger" onClick={() => cargarEliminar(val.InsuranceProviderID)}>Eliminar</Button>
                     </td>
                   </tr>
                 ))}
@@ -251,6 +272,7 @@ export const InsuranceProviders = () => {
         <ModalHeader toggle={toggleSave}>Agregar Proveedor de Seguros</ModalHeader>
         <ModalBody>
             {[
+            { label: "ID", key: "InsuranceProviderID" },
             { label: "Nombre", key: "Name" },
             { label: "Numero de contacto", key: "ContactNumber" },
             { label: "Email", key: "Email" },
@@ -262,11 +284,10 @@ export const InsuranceProviders = () => {
             { label: "Codigo postal", key: "ZipCode" },
             { label: "Detalles de cobertura", key: "CoverageDetails" },
             { label: "Enlace URL del logo", key: "LogoUrl" },
-            { label: "Es preferido", key: "IsPreferred", type: "checkbox" },
-            { label: "ID de la red de seguros", key: "NetworkTypeId", type: "number" },
+            { label: "ID de la red de seguros", key: "NetworkTypeId", type: "number"},
             { label: "Numero de contacto de la atencion al cliente", key: "CustomerSupportContact" },
             { label: "Regiones aceptadas", key: "AcceptedRegions" },
-            { label: "Cantidad maxima de cobertura", key: "MaxCoverageAmount", type: "number" },
+            { label: "Cantidad maxima de cobertura", key: "MaxCoverageAmount", type: "number"},
             ].map((field, i) => (
             <FormGroup key={i}>
                 <Label>{field.label}</Label>
@@ -287,6 +308,16 @@ export const InsuranceProviders = () => {
             <Label check>
                 <Input
                 type="checkbox"
+                checked={save.IsPreferred || false}
+                onChange={(e) => setSave({ ...save, IsPreferred: e.target.checked })}
+                />{' '}
+                Es Preferido
+            </Label>
+            </FormGroup>
+            <FormGroup check>
+            <Label check>
+                <Input
+                type="checkbox"
                 checked={save.IsActive || false}
                 onChange={(e) => setSave({ ...save, IsActive: e.target.checked })}
                 />{' '}
@@ -299,30 +330,38 @@ export const InsuranceProviders = () => {
             <Button color="danger" onClick={toggleSave}>Cancelar</Button>
         </ModalFooter>
         </Modal>
-        
+      
         {/* Modal Edit */}
         <Modal isOpen={modalUpdate} toggle={toggleUpdate}>
         <ModalHeader toggle={toggleUpdate}>Editar Proveedores de Seguros</ModalHeader>
         <ModalBody>
             {Object.entries(edit).map(([key, val], i) => (
-            key !== 'IsActive' ? (
+            key !== 'IsActive' && key !== 'IsPreferred'  ? (
                 <FormGroup key={i}>
                 <Label>{key}</Label>
                 <Input
-                    type={key === 'date' ? 'date' : key === 'IsPreferred' ? 'checkbox' : 'text'}
-                    value={key === 'IsPreferred' ? undefined : val}
-                    checked={key === 'IsPreferred' ? edit[key] : undefined}
+                    type={key === 'date' ? 'date' : 'text'}
+                    value={val}
                     onChange={(e) =>
                     setEdit({
                         ...edit,
-                        [key]: key === 'IsPreferred' ? e.target.checked :
-                        key === 'NetworkTypeId' || key === 'MaxCoverageAmount' ? parseFloat(e.target.value) : e.target.value,
+                        [key]: key === 'NetworkTypeId' || key === 'MaxCoverageAmount' ? parseFloat(e.target.value) : e.target.value,
                     })
                     }
                 />
                 </FormGroup>
             ) : null
             ))}
+            <FormGroup check>
+            <Label check>
+                <Input
+                type="checkbox"
+                checked={edit.IsPreferred}
+                onChange={(e) => setEdit({ ...edit, IsPreferred: e.target.checked })}
+                />{' '}
+                Es Preferido
+            </Label>
+            </FormGroup>
             <FormGroup check>
             <Label check>
                 <Input
@@ -335,7 +374,7 @@ export const InsuranceProviders = () => {
             </FormGroup>
         </ModalBody>
         <ModalFooter>
-            <Button color="primary" onClick={updateInsuranceProvider}>Actualizar</Button>
+            <Button color="primary" onClick={updateInsuranceProvider}> Actualizar</Button>
             <Button color="danger" onClick={toggleUpdate}>Cancelar</Button>
         </ModalFooter>
         </Modal>

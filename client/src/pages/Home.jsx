@@ -42,19 +42,7 @@ export const Home = () => {
         <div className="content">
           <div className="Home">
             <div className="Top">
-              {NetworkTypeTemp.map((val, key) => {
-                return (
-                  <div className="estiloWidget">
-                    <div className="estiloDetalles">
-                      <div className="estiloRespuesta">
-                        Proveedores de seguros
-                        <div className="estiloTitulo">{val.InsuranceProviders}</div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-              {InsuranceProvidersTemp.map((val, key) => {
+            {NetworkTypeTemp.map((val, key) => {
                 return (
                   <div className="estiloWidget">
                     <div className="estiloDetalles">
@@ -66,10 +54,20 @@ export const Home = () => {
                   </div>
                 );
               })}
-            </div>
-
-
-            
+              
+              {InsuranceProvidersTemp.map((val, key) => {
+                return (
+                  <div className="estiloWidget">
+                    <div className="estiloDetalles">
+                      <div className="estiloRespuesta">
+                        Proveedores de seguros
+                        <div className="estiloTitulo">{val.InsuranceProviders}</div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+                </div>
           </div>
           <div className="Bottom">
             <img src={logo} className="logo"></img>
