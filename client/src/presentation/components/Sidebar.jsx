@@ -19,7 +19,7 @@ const Sidebar = () => {
       <div className="logo-content">
         <div className="logo">
           <img src={logoImg} className="logo-img" />
-          <div className="logo-text">SUMASY</div>
+          <div className="logo-text">CheckMed</div>
         </div>
       </div>
       <ul className="SidebarList">

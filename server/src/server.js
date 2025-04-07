@@ -16,10 +16,9 @@ app.use(cors());
 app.use(express.json());
 
 // Registrar rutas
-app.use("/users", userRoutes);
+app.use("/users", userRoutes); //localhost:3000/users
 app.use("/doctors", doctorRoutes);
 app.use("/patients", patientRoutes);
-app.use("/login", userRoutes)
 
 
 const PORT = process.env.PORT || 3000;

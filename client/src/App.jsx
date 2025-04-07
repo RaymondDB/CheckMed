@@ -1,11 +1,12 @@
-import "./pages/css/App.css"; //App.css
+//import "/presentation/pages/css/App.css";
+import "./presentation/pages/css/App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Home } from "./pages/Home";
-import { Patients } from "./pages/Pacientes";
-import { Usuarios } from "./pages/Usuarios";
-import { Doctors } from "./pages/Doctores";
+import { Home } from "./presentation/pages/Home";
+import { Patients } from "./presentation/pages/Pacientes";
+import { Usuarios } from "./presentation/pages/Usuarios";
+import { Doctors } from "./presentation/pages/Doctores";
 import { Provider } from "./auth/userContext";
-import { Page404 } from "./pages/404";
+import { Page404 } from "./presentation/pages/404";
 
 function App() {
   return (
