@@ -1,5 +1,5 @@
 import "./../pages/css/Sidebar.css";
-import logoImg from "../assets/img/logologo.jpg";
+import logoImg from "../../assets/img/logologo.jpg";
 import { Link, useNavigate } from "react-router-dom";
 const Sidebar = () => {
   let navigate = useNavigate();

@@ -30,14 +30,14 @@ class InsuranceNetworkTypeBService {
     } 
 
     console.log("Verificando si el tipo de red de seguros ya está registrado...");
-    const existingInsuranceNetworkType = await this.insuranceNetworkTypeRepository.findById(NetworkTypeID);
+    const existingInsuranceNetworkType = await this.insuranceNetworkTypeRepository.findById(NetworkTypeId);
     if (existingInsuranceNetworkType.success && existingInsuranceNetworkType.data) {
       console.error("Error: Ya existe un tipo de red de seguros registrado con esa identificación.");
       return OperationResult.failure('InsuranceNetworkTypeAlreadyExisting');
     }
 
     const insuranceNetworkTypeToSave = {
-    NetworkTypeID: insuranceNetworkTypeData.NetworkTypeID,
+    NetworkTypeId: insuranceNetworkTypeData.NetworkTypeId,
     Name: insuranceNetworkTypeData.Name,
     Description: insuranceNetworkTypeData.Description,
     CreatedAt: new Date(),
@@ -59,10 +59,10 @@ class InsuranceNetworkTypeBService {
   }
 
 
-  async getInsuranceNetworkTypeById(NetworkTypeID) {
-    console.log("🔍 Buscando tipo de red de seguros con ID:", NetworkTypeID);
+  async getInsuranceNetworkTypeById(NetworkTypeId) {
+    console.log("🔍 Buscando tipo de red de seguros con ID:", NetworkTypeId);
     
-    const insuranceNetworkType = await this.insuranceNetworkTypeRepository.findById(NetworkTypeID)
+    const insuranceNetworkType = await this.insuranceNetworkTypeRepository.findById(NetworkTypeId)
     if (!insuranceNetworkType.success) {
       return OperationResult.failure(insuranceNetworkType.data);//Devuelve el error encontrado
     }
@@ -73,10 +73,10 @@ class InsuranceNetworkTypeBService {
 
 
 
-  async updateInsuranceNetworkType(NetworkTypeID, updatedFields) {
-    console.log("🛠️ Buscando tipo de red de seguros con ID:", NetworkTypeID);
+  async updateInsuranceNetworkType(NetworkTypeId, updatedFields) {
+    console.log("🛠️ Buscando tipo de red de seguros con ID:", NetworkTypeId);
 
-    const insuranceNetworkType = await this.insuranceNetworkTypeRepository.findById(NetworkTypeID);
+    const insuranceNetworkType = await this.insuranceNetworkTypeRepository.findById(NetworkTypeId);
     if (!insuranceNetworkType.success) {
       return OperationResult.failure(insuranceNetworkType.data);//Devuelve el error encontrado
     }
@@ -90,7 +90,7 @@ class InsuranceNetworkTypeBService {
 
     updatedFields.UpdatedAt = new Date();
     
-    const updateResult = await this.insuranceNetworkTypeRepository.update(NetworkTypeID, updatedFields);
+    const updateResult = await this.insuranceNetworkTypeRepository.update(NetworkTypeId, updatedFields);
     if (updateResult.success) {
       EventBus.emit("InsuranceNetworkTypeUpdated", updateResult.data);
     }
@@ -98,19 +98,19 @@ class InsuranceNetworkTypeBService {
     return updateResult;
   }
 
-  async deleteInsuranceNetworkType(NetworkTypeID) {
-    console.log("🗑 Buscando tipo de red de seguros con ID:", NetworkTypeID);
+  async deleteInsuranceNetworkType(NetworkTypeId) {
+    console.log("🗑 Buscando tipo de red de seguros con ID:", NetworkTypeId);
 
-    const insuranceNetworkType = await this.insuranceNetworkTypeRepository.findById(NetworkTypeID);
+    const insuranceNetworkType = await this.insuranceNetworkTypeRepository.findById(NetworkTypeId);
     if (!insuranceNetworkType.success) {
       return OperationResult.failure(insuranceNetworkType.data);//Devuelve el error encontrado
     }
 
-    console.log("🗑 Desactivando tipo de red de seguros con ID:", NetworkTypeID);
-    const deleteResult = await this.insuranceNetworkTypeRepository.delete(NetworkTypeID);
+    console.log("🗑 Desactivando tipo de red de seguros con ID:", NetworkTypeId);
+    const deleteResult = await this.insuranceNetworkTypeRepository.delete(NetworkTypeId);
 
     if (deleteResult.success) {
-      EventBus.emit("InsuranceNetworkTypeDeleted", { NetworkTypeID });
+      EventBus.emit("InsuranceNetworkTypeDeleted", { NetworkTypeId });
     }
 
     return deleteResult;

@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import "./css/Home.css"; //home.css
 import { Widget } from "../components/Widget"; //components/widget
-import logo from "../assets/img/sumasy-nobg.png"; //sumasy-nobg.png
+import logo from "../../assets/img/sumasy-nobg.png"; //sumasy-nobg.png
 import Sidebar from "../components/Sidebar";
 import Axios from "axios";
 import React, { useState, useEffect } from "react";

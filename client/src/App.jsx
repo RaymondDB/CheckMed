@@ -1,9 +1,9 @@
-import "./pages/css/App.css"; //App.css
+import "./presentation/pages/css/App.css"; //App.css
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Home } from "./pages/Home";
-import { InsuranceNetworkType } from "./pages/TiposDeRedesDeSeguros";
-import { InsuranceProviders } from "./pages/ProveedoresDeSeguros";
-import { Page404 } from "./pages/404";
+import { Home } from "./presentation/pages/Home";
+import { InsuranceNetworkType } from "./presentation/pages/TiposDeRedesDeSeguros";
+import { InsuranceProviders } from "./presentation/pages/ProveedoresDeSeguros";
+import { Page404 } from "./presentation/pages/404";
 
 function App() {
   return (

@@ -10,7 +10,7 @@ class InsuranceNetworkTypeDTO {
   
     static fromModel(insuranceNetworkTypeModel) {
       return new InsuranceNetworkTypeDTO({
-        id: insuranceNetworkTypeModel.NetworkTypeID,
+        id: insuranceNetworkTypeModel.NetworkTypeId,
         name: insuranceNetworkTypeModel.Name,
         description: insuranceNetworkTypeModel.Description,
         createdAt: insuranceNetworkTypeModel.CreatedAt,

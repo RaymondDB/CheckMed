@@ -55,7 +55,7 @@ class InsuranceNetworkTypeImplementation {
       //console.log("💾 Guardando tipo de red de seguros en BD:", insuranceNetworkTypeData);
 
         const insuranceNetworkType = await InsuranceNetworkType.create({
-          NetworkTypeId: insuranceNetworkTypeData.NetworkTypeID,
+          NetworkTypeId: insuranceNetworkTypeData.NetworkTypeId,
           Name: insuranceNetworkTypeData.Name,
           Description: insuranceNetworkTypeData.Description,
           CreatedAt: today,
