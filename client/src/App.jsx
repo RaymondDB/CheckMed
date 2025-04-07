@@ -1,7 +1,7 @@
 // src/App.jsx
-import Notifications from "./components/Notifications";
-import Roles from "./components/Roles";
-import Status from "./components/Status";
+import Notifications from "./presentation/views/Notifications";
+import Roles from "./presentation/views/Roles";
+import Status from "./presentation/views/Status";
 
 function App() {
   return (
