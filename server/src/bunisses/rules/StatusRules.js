@@ -1,9 +1,24 @@
 class StatusRules {
-    static validate(status) {
-      if (!status.appointmentId) throw new Error("Appointment ID is required");
-      if (!status.status) throw new Error("Status is required");
-    }
+  static validateName(name) {
+    return typeof name === 'string' && name.trim().length > 0;
   }
-  
-  module.exports = StatusRules;
-  
+
+  static validateStatusData(statusData) {
+    // Required fields
+    if (!statusData.name) {
+      return false;
+    }
+
+    // Validate each field
+    return this.validateName(statusData.name);
+  }
+
+  static validateUniqueStatusName(name, existingStatuses) {
+    // Check if status name already exists
+    return !existingStatuses.some(status => 
+      status.name.toLowerCase() === name.toLowerCase()
+    );
+  }
+}
+
+module.exports = StatusRules;

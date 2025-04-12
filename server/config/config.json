@@ -1,0 +1,43 @@
+{
+    "development": {
+      "database": {
+        "dialect": "mysql",
+        "host": "localhost",
+        "port": 3306,
+        "username": "dev_user",
+        "password": "dev_password",
+        "database": "appointments_dev"
+      },
+      "server": {
+        "port": 3000,
+        "host": "localhost"
+      },
+      "logging": true
+    },
+    "test": {
+      "database": {
+        "dialect": "sqlite",
+        "storage": ":memory:"
+      },
+      "server": {
+        "port": 3001,
+        "host": "localhost"
+      },
+      "logging": false
+    },
+    "production": {
+      "database": {
+        "dialect": "mysql",
+        "host": "production-db-server",
+        "port": 3306,
+        "username": "prod_user",
+        "password": "prod_password",
+        "database": "appointments_prod"
+      },
+      "server": {
+        "port": 8080,
+        "host": "0.0.0.0"
+      },
+      "logging": false
+    }
+  }

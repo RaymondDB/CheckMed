@@ -2,23 +2,52 @@ const AppointmentDTO = require('../dtos/AppointmentDTO');
 const AppointmentRules = require('../rules/AppointmentRules');
 
 class AppointmentBServices {
-  async create(appointmentData) {
-    AppointmentRules.validate(appointmentData);
-    const appointment = new AppointmentDTO(
-      appointmentData.id,
-      appointmentData.date,
-      appointmentData.client,
-      appointmentData.service
-    );
-    return appointment;
+  constructor(appointmentRepository, statusRepository) {
+    this.appointmentRepository = appointmentRepository;
+    this.statusRepository = statusRepository;
   }
 
-  async getAll() {
-    return [
-      new AppointmentDTO(1, '2025-03-05', 'John Doe', 'Haircut'),
-      new AppointmentDTO(2, '2025-03-06', 'Jane Smith', 'Shave')
-    ];
+  async validateAppointmentData(appointmentData, isUpdate = false, appointmentId = null) {
+    // Validate basic appointment data
+    if (!AppointmentRules.validateAppointmentData(appointmentData)) {
+      return {
+        isValid: false,
+        message: 'Invalid appointment data'
+      };
+    }
+
+    // Check if status exists
+    const status = await this.statusRepository.findById(appointmentData.statusId);
+    if (!status) {
+      return {
+        isValid: false,
+        message: 'Status not found'
+      };
+    }
+
+    // For updates, check if appointment exists
+    if (isUpdate && appointmentId) {
+      const existingAppointment = await this.appointmentRepository.findById(appointmentId);
+      if (!existingAppointment) {
+        return {
+          isValid: false,
+          message: 'Appointment not found'
+        };
+      }
+    }
+
+    return {
+      isValid: true
+    };
+  }
+
+  async transformAppointmentsToDTO(appointments) {
+    return AppointmentDTO.fromEntities(appointments);
+  }
+
+  async transformAppointmentToDTO(appointment) {
+    return AppointmentDTO.fromEntity(appointment);
   }
 }
 
-module.exports = new AppointmentBServices();
+module.exports = AppointmentBServices;

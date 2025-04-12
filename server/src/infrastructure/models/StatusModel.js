@@ -1,9 +1,46 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../db/sqlConnection");
+const { DataTypes, Model } = require('sequelize');
 
-const Status = sequelize.define("Status", {
-    statusID: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    statusName: { type: DataTypes.STRING, allowNull: false }
-}, { tableName: "Status", schema: "appointments", timestamps: false });
+class StatusModel extends Model {
+  static init(sequelize) {
+    super.init(
+      {
+        id: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+          autoIncrement: true
+        },
+        name: {
+          type: DataTypes.STRING,
+          allowNull: false,
+          unique: true
+        },
+        createdAt: {
+          type: DataTypes.DATE,
+          allowNull: false,
+          defaultValue: DataTypes.NOW
+        },
+        updatedAt: {
+          type: DataTypes.DATE,
+          allowNull: false,
+          defaultValue: DataTypes.NOW
+        }
+      },
+      {
+        sequelize,
+        modelName: 'status',
+        tableName: 'statuses',
+        timestamps: true
+      }
+    );
+    return StatusModel;
+  }
 
-module.exports = Status;
+  static associate(models) {
+    StatusModel.hasMany(models.AppointmentModel, {
+      foreignKey: 'status_id',
+      as: 'appointments'
+    });
+  }
+}
+
+module.exports = StatusModel;

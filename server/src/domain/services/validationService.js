@@ -1,16 +1,31 @@
+const AppointmentRules = require('../../bunisses/rules/AppointmentRules');
+const StatusRules = require('../../bunisses/rules/StatusRules');
+
 class ValidationService {
-    static validateDate(date) {
-      if (!Date.parse(date)) {
-        throw new Error('Invalid date format');
-      }
-    }
-  
-    static validateClient(client) {
-      if (!client || client.trim() === '') {
-        throw new Error('Client information is required');
-      }
-    }
+  constructor(statusRepository) {
+    this.statusRepository = statusRepository;
   }
-  
-  module.exports = ValidationService;
-  
+
+  validateAppointment(appointmentData, isUpdate = false) {
+    return AppointmentRules.validateAppointmentData(appointmentData);
+  }
+
+  async validateStatus(statusData, isUpdate = false) {
+    // Basic validation
+    if (!StatusRules.validateStatusData(statusData)) {
+      return false;
+    }
+
+    // Check name uniqueness if needed
+    if (statusData.name) {
+      const existingStatuses = await this.statusRepository.findAll();
+      if (!StatusRules.validateUniqueStatusName(statusData.name, existingStatuses)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+}
+
+module.exports = ValidationService;

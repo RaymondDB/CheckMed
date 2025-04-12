@@ -1,28 +1,46 @@
-const sql = require('mssql');
+const { Sequelize } = require('sequelize');
 
-const dbConfig = {
-  user: 'tu_usuario',  // Tu nombre de usuario de SQL Server
-  password: 'tu_contraseña',  // Tu contraseña de SQL Server
-  server: 'localhost',  // Dirección del servidor SQL
-  database: 'barberia',  // Nombre de la base de datos
-  options: {
-    encrypt: true,  // Usado para conexiones en Azure
-    trustServerCertificate: true  // Habilitar si estás en un entorno de desarrollo
+module.exports = function dbConfig(config) {
+  const env = process.env.NODE_ENV || 'development';
+  const dbConfig = config[env].database;
+
+  let sequelize;
+
+  if (dbConfig.dialect === 'sqlite') {
+    sequelize = new Sequelize({
+      dialect: 'sqlite',
+      storage: dbConfig.storage || ':memory:',
+      logging: config[env].logging ? console.log : false
+    });
+  } else {
+    sequelize = new Sequelize(
+      dbConfig.database,
+      dbConfig.username,
+      dbConfig.password,
+      {
+        host: dbConfig.host,
+        port: dbConfig.port,
+        dialect: dbConfig.dialect,
+        logging: config[env].logging ? console.log : false,
+        pool: {
+          max: 5,
+          min: 0,
+          acquire: 30000,
+          idle: 10000
+        }
+      }
+    );
   }
-};
 
-const poolPromise = new sql.ConnectionPool(dbConfig)
-  .connect()
-  .then(pool => {
-    console.log("Conexión exitosa a la base de datos");
-    return pool;
-  })
-  .catch(err => {
-    console.error("Error en la conexión a la base de datos", err);
-    process.exit(1);
-  });
+  // Test the connection
+  (async () => {
+    try {
+      await sequelize.authenticate();
+      console.log('Database connection has been established successfully.');
+    } catch (error) {
+      console.error('Unable to connect to the database:', error);
+    }
+  })();
 
-module.exports = {
-  poolPromise,
-  sql
+  return sequelize;
 };

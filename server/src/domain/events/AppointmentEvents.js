@@ -1,12 +1,40 @@
-const { eventBus } = require('./config');
+const EVENT_TYPES = require('./config/eventTypes');
 
 class AppointmentEvents {
-  static appointmentCreated(appointment) {
-    eventBus.emit('appointmentCreated', appointment);
+  static created(appointmentDTO) {
+    return {
+      type: EVENT_TYPES.APPOINTMENT.CREATED,
+      payload: appointmentDTO,
+      timestamp: new Date()
+    };
   }
 
-  static appointmentUpdated(appointment) {
-    eventBus.emit('appointmentUpdated', appointment);
+  static updated(appointmentDTO) {
+    return {
+      type: EVENT_TYPES.APPOINTMENT.UPDATED,
+      payload: appointmentDTO,
+      timestamp: new Date()
+    };
+  }
+
+  static deleted(appointmentId) {
+    return {
+      type: EVENT_TYPES.APPOINTMENT.DELETED,
+      payload: { id: appointmentId },
+      timestamp: new Date()
+    };
+  }
+
+  static statusChanged(appointmentDTO, oldStatusId, newStatusId) {
+    return {
+      type: EVENT_TYPES.APPOINTMENT.STATUS_CHANGED,
+      payload: {
+        appointment: appointmentDTO,
+        oldStatusId,
+        newStatusId
+      },
+      timestamp: new Date()
+    };
   }
 }
 

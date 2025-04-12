@@ -1,13 +1,24 @@
 class StatusName {
-  constructor(status) {
-    if (status !== 'Scheduled' && status !== 'Completed' && status !== 'Cancelled') {
-      throw new Error('Invalid status');
+  constructor(name) {
+    if (!this.isValidName(name)) {
+      throw new Error('Invalid status name. Name must be a non-empty string.');
     }
-    this.status = status;
+    this.value = name.trim();
+  }
+
+  isValidName(name) {
+    return typeof name === 'string' && name.trim().length > 0;
   }
 
   toString() {
-    return this.status;
+    return this.value;
+  }
+
+  equals(otherName) {
+    if (!(otherName instanceof StatusName)) {
+      return false;
+    }
+    return this.value.toLowerCase() === otherName.value.toLowerCase();
   }
 }
 
